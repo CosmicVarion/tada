@@ -177,20 +177,22 @@ function deleteNote(){
     // console.log('ID array: ' + IDarray); // print out current ID array
 };
 /*----------------------------------Load Note----------------------------------*/
-function loadNote(title, content, ID, Xaxis, Yaxis) {
-    
+function loadNote(title, content, ID, Xaxis, Yaxis, color = "#12EFA8") {
+    // the color buttons C should be replaced with <i class="fa fa-paint-brush" aria-hidden="true"></i> but maybe the font awesome urls are wrong
 
     Xaxis = Xaxis-190;
     Yaxis = Yaxis-130;
-    var noteTemp =  '<div class="note" id="' + ID + '" style="position: absolute; left:' +Xaxis+ '; top:' +Yaxis+ '">'
+    var noteTemp =  '<div class="note" id="' + ID + '" style=" background-color: ' + color + '; position: absolute; left:' +Xaxis+ '; top:' +Yaxis+ '">'
                         +'<a href="javascript:;" class="button remove">X</a>'
                         // +'<a href="javascript:;" class="button save">S</a>'
-                        +'<a href="javascript:;" class="button edit">E</a>'                                                
+                        +'<a href="javascript:;" class="button edit">E</a>'   
+                        +'<a href="javascript:;" onclick="displayColorMenu(this.parentElement)" style=" background-color:#000000;" class="button color"><center>C</center></a>'                                             
                         + 	'<div class="note_cnt">'
                         +		'<textarea class="title" placeholder="Testing title">'+title+'</textarea>'
                         + 		'<textarea class="cnt" placeholder="Testing description">'+content+'</textarea>' 
                         +	'</div> '
-                        +'</div>';
+                        +'</div>'
+
 
     // IDarray.push(ID.toString()); // push the added note's ID into the ID array
     // console.log('ID array: ' + IDarray); // print out current ID array
@@ -232,6 +234,7 @@ function newNote() {
         var noteTemp =  '<div class="note" id="' + ID.toString() + '" style="position: absolute; left:' + Xaxis + '; top:' + Yaxis + '">'
                         +'<a href="javascript:;" class="button remove">X</a>'
                         +'<a href="javascript:;" class="button save">S</a>'
+                        +'<a href="javascript:;" onclick="displayColorMenu(this.parentElement)" style=" background-color:#000000;" class="button color"><center>C</center></a>'  
                         // +'<a href="javascript:;" class="button edit">E</a>'                                                
                         + 	'<div class="note_cnt">'
                         +		'<textarea class="title" placeholder="Enter note title"></textarea>'
@@ -279,13 +282,15 @@ function editNote() {
     var eX = getOffset($(this)[0]).left;
     var eY = getOffset($(this)[0]).top;
     var eID = $(this).parents('.note')[0].id
+    var eColor = rgb2hex($(this).parents('.note')[0].style.backgroundColor);
    
     console.log('Title: ', eTitle);
     console.log('Text: ', eText);
     console.log('Positions: ', eX,eY);
     console.log('ID: ', eID);
-    
-    var toSend = {"username": username, "title": eTitle, "_id" : eID, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                
+    console.log('Color', eColor);
+
+    var toSend = {"username": username, "title": eTitle, "_id" : eID, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : eColor};                
     $.ajax({
       url: 'https://ubcse442tada.com/edit_note',
       type: "post",
@@ -306,13 +311,16 @@ function editNote() {
       },
     });
   }
+
+
 /*----------------------------------Save Note----------------------------------*/
 function saveNote(){
     console.log('----------------Saving notes----------------');
     try{
     var eTitle = $(this).parents('.note').children('.note_cnt').children('.title')[0].value; 
     var eText = $(this).parents('.note').children('.note_cnt').children('.cnt')[0].value; 
-    var ID = $(this).parents('.note')[0].id;    
+    var ID = $(this).parents('.note')[0].id;
+    var eColor = rgb2hex($(this).parents('.note')[0].style.backgroundColor);  
     }catch(e){
         if(e){
             var eTitle = '';
@@ -327,6 +335,7 @@ function saveNote(){
     console.log('Title: ', eTitle);
     console.log('Text: ', eText);
     console.log('Positions: ', eX,eY);
+    console.log('Color', eColor);
     
 
     
@@ -345,7 +354,7 @@ function saveNote(){
     // var newID = $(this).parents('.note')[0].id; 
     // console.log('new ID: ',newID)
 
-    var toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};            
+    var toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : eColor};            
     $.ajax({
         url: 'https://ubcse442tada.com/add_note',
         type: "post",
@@ -376,6 +385,47 @@ function saveNote(){
     $('.edit').click(editNote); // enable edit functionality onclick of edit button
     $(this).remove(); // remove the save button 
 };
+
+
+
+/* color notes code */
+
+function displayColorMenu(elemt){
+    //append to this array to add more color options
+    var colorList = ['#F0FFFF', '#EECBAD', '#E6E6FA','#FFE4E1', '#F8F8FF'];
+
+    var span = document.createElement('span');
+    for (var i = elemt.children.length - 1; i >= 0; i--) {
+        elemt.children[i].style.display = "none";
+    }
+    elemt.style.backgroundColor = "#000000";
+    var inner = "";
+    for (var i = colorList.length - 1; i >= 0; i--) {
+        inner += "<div class='colorNode' onclick='chooseColor(this.parentElement.parentElement,this)' style='background-color:" + colorList[i] +"'></div>";
+    }
+    span.innerHTML = inner
+    elemt.appendChild(span);
+}
+
+
+
+function chooseColor(elemt, colorNode){
+    elemt.style.backgroundColor = colorNode.style.backgroundColor;
+    elemt.removeChild(colorNode.parentElement);
+    for (var i = elemt.children.length - 1; i >= 0; i--) {
+        elemt.children[i].style.display = "inherit";
+    }
+}
+
+function rgb2hex(rgb){
+ rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+ return (rgb && rgb.length === 4) ? "#" +
+  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+}
+
+
 // function saveNotes() {
 //     console.log('Saving notes...');
 
