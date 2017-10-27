@@ -222,6 +222,31 @@ def login():
         event['_id'] = str(event['_id'])    
     
     return jsonify({"notes": notes, "events": events})
+def check_user(username, token):
+	try:
+		savedtoken = mongo.db.auth.find({"username": username})
+	except Exception as e:
+		print(e)
+		return error(e)
+	if(savedtoken == token):
+		return success('user authenticated')
+	else:
+		return error('user not authenticated')
+		
+def update_token(username, token): #ONLY CALL THIS WITHIN THE LOGIN FUNCTION. IF THIS SEES THE LIGHT OF FRONTEND THERE IS NO SECURITY
+	try:
+		savedtoken = mongo.db.auth.find({"username": username})
+	except Exception as e: #user isnt  in the db, add them
+		mongo.db.auth.insert_one({"username": username,
+		"auth_token": token})
+		return success('Added new user and token')
+	mongo.db.auth.update_one({"username": username,
+	"auth_token": token})
+	return success('Updated users token')
+		
+			
+		
+	
 
 
 

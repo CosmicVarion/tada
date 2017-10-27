@@ -26,4 +26,9 @@ db.events.save({
     "color": "#ffffff"
 });
 
+db.auth.save({
+	"username": "testuser",
+	"auth_token": "token"
+});
+
 
