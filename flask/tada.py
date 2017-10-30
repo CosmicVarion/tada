@@ -3,8 +3,9 @@ from flask_assets import Environment, Bundle
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 
-from google.oauth2 import id_token #Make sure these 2 are actually installed
+from google.oauth2 import id_token #Make sure these 3 are actually installed
 from google.auth.transport import requests
+from flask.ext.api import status
 
 
 
@@ -92,6 +93,13 @@ def add_note():
     json_str  = request.get_json()
     print(json_str)
     json_dict = dict(json_str)    
+	#validation check
+	username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
     
     _id = str(ObjectId())
     json_dict['_id'] = _id
@@ -113,6 +121,13 @@ def add_event():
     json_str  = request.get_json()
     print(json_str)
     json_dict = dict(json_str)
+	#validation check
+	username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
     
     _id = str(ObjectId())
     json_dict['_id'] = _id
@@ -136,6 +151,13 @@ def delete_note():
     json_str  = request.get_json()
     print(json_str)
     json_dict = dict(json_str)    
+	#validation check
+	username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
 
     try:	
         _id = json_dict['_id']
@@ -155,6 +177,13 @@ def delete_event():
     json_str  = request.get_json()
     print(json_str)	
     json_dict = dict(json_str)    
+	#validation check
+	username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
 
     try:	
         _id = json_dict['_id']
@@ -174,6 +203,13 @@ def edit_note():
     json_str  = request.get_json()
     print(json_str)	
     json_dict = dict(json_str)
+	#validation check
+	username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
 
     try:
         _id = json_dict['_id']
@@ -194,6 +230,13 @@ def edit_event():
     json_str  = request.get_json()
     print(json_str)	
     json_dict = dict(json_str)
+	#validation check
+	username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
 
     try:	
         _id = json_dict['_id']
@@ -214,8 +257,13 @@ def login():
     json_str  = request.get_json()
     print(json_str)	
     json_dict = dict(json_str)
-
     username = json_dict['username']
+	token = json_dict['auth_token']
+	usercheck = check_user(username, token)
+	if not usercheck:
+		content = 'Validation failed'
+		return content, status.HTTP_401_UNAUTHORIZED
+		
     
     notes = [note for note in mongo.db.notes .find({"username": username})]
     for note in notes:
@@ -226,16 +274,17 @@ def login():
         event['_id'] = str(event['_id'])    
     
     return jsonify({"notes": notes, "events": events})
+
 def check_user(username, token):
 	CLIENT_ID = '275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com'
 	try:
 		authcheck = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
 	except Exception as e:
-		return error(e)
+		return false
 	if authcheck['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-        return error(ValueError('Wrong issuer.'))
+        return false
 	#if all checks pass, theyre good
-	return success('token validated')	
+	return true	
 		
 
 	
