@@ -306,6 +306,23 @@ function editNote() {
       },
     });
   }
+/*----------------------------------Date Format----------------------------------*/
+var dateFormats = {
+   "iso_int" : "YYYY-MM-DD",
+   "short_date" : "DD/MM/YYYY",
+   "iso_date_time": "YYYY-MM-DDTHH:MM:SS",
+   "iso_date_time_utc": "YYYY-MM-DDTHH:MM:SSZ"
+    //define other well known formats if you want
+}
+  
+function getFormat(d){
+  for (var prop in dateFormats) {
+       if(moment(d, dateFormats[prop],true).isValid()){
+          return dateFormats[prop];
+       }
+  }
+  return null;
+}
 /*----------------------------------Save Note----------------------------------*/
 function saveNote(){
     console.log('----------------Saving notes----------------');
@@ -326,24 +343,49 @@ function saveNote(){
     
     console.log('Title: ', eTitle);
     console.log('Text: ', eText);
-    console.log('Positions: ', eX,eY);
-    
+    console.log('Positions: ', eX,eY); 
 
-    
     var testID = "1";
     $this.parent().attr("id", testID);
-    
  
-//    console.log('ID: ', ID);
+    var dateformat = [eText.match(/\d{2}([/.])\d{2}\1\d{4}/g), eText.match(/\d{4}([/.])\d{2}\1\d{2}/g), eText.match(/^\d{2}-\d{2}-\d{4}$/), eText.match(/^\d{4}-\d{2}-\d{2}$/)];
 
-    // // testing
-    // var prevID = $(this).parents('.note')[0].id; // == get 'noteID' + ID.toString() of deleted note
-    // console.log('old ID: ',prevID);
-    // var ID = '1234'
-    // var $this = $(this);
-    // $this.parent().attr("id",ID);
-    // var newID = $(this).parents('.note')[0].id; 
-    // console.log('new ID: ',newID)
+    console.log(dateformat);
+    var i = 0;
+    while(i < dateformat.length){   
+        if (dateformat[i]!=null) {
+            var newElement = {title : eTitle, start : dateformat[i][0]};
+            $('#calendar_full').fullCalendar('renderEvent', newElement , true);
+            i = dateformat.length;
+        }
+        i++;
+    }
+
+    if (validateForm()) {
+        // $('#addEventModal').modal('toggle');
+        //   var toSend = {"username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
+        //   $.ajax({
+        //     url: 'https://ubcse442tada.com/add_event',
+        //     type: "post",
+        //     data: JSON.stringify(toSend),
+        //     dataType: "json",
+        //     contentType: "application/json",
+        //     success: function(response) {
+  
+        //         if ('success' in response) {
+        //         console.log(response['_id'])
+                // var newElement = {id : response['_id'], title : titleOfNewEvent, start : startDateOfNewEvent, end : endDateOfNewEvent};
+                //     $('#calendar_full').fullCalendar('renderEvent', newElement , true);
+        //         }
+        //         else if ('error' in response) {
+        //             console.log(response['error'])
+        //         }
+        //     },
+        //     error: function(response) {
+        //       console.log(response);
+        //     },
+        //   });
+      }
 
     var toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};            
     $.ajax({
