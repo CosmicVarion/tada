@@ -63,7 +63,6 @@
   function validateForm() {
     var eventTitle = document.getElementById("eventTitle").value;
     var startTime = document.getElementById("startTimeCalendar").value;
-    var endTime = document.getElementById("endTimeCalendar").value;
     var flag = true;
     if (eventTitle.length == 0) {
       document.getElementById("titlemsg").style.display="";
@@ -75,11 +74,6 @@
       flag = false;
     }
     else {document.getElementById("startmsg").style.display="none";}
-    if (!moment(endTime, "YYYY-MM-DD HH:mm", true).isValid() || endTime <= startTime) {
-      document.getElementById("endmsg").style.display="";
-      flag = false;
-    }
-    else {document.getElementById("endmsg").style.display="none";}
     return flag;
   }
 
@@ -112,7 +106,9 @@
       eventClick: function(calEvent) {
         document.getElementById("eventTitle").value = calEvent.title;
         document.getElementById("startTimeCalendar").value = calEvent.start.format('YYYY-MM-DD HH:mm');
-        document.getElementById("endTimeCalendar").value = calEvent.end.format('YYYY-MM-DD HH:mm');
+        if (calEvent.end != null) {
+          document.getElementById("endTimeCalendar").value = calEvent.end.format('YYYY-MM-DD HH:mm');
+        }
         $('#deleteModalButton').removeClass('disabled');
         $('#deleteModalButton').attr("data-toggle", "modal");
         document.getElementById("deleteModalButton").onclick = function(){deleteEvent(calEvent.id)};
@@ -559,7 +555,6 @@
               <label for="endTimeCalendar" class="col-sm-4 control-label">End Time: </label>
               <div class="col-sm-8">
                 <input type="text" id="endTimeCalendar" name="endTimeCalendar" class="form-control" placeholder="YYYY-MM-DD HH:MM">
-                <div id="endmsg" style="color:Red;display:none">Not a valid End Time</div>
               </div>
             </div>
           </form>
