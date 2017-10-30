@@ -232,7 +232,7 @@ def check_user(username, token):
 		authcheck = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
 	except Exception as e:
 		return error(e)
-	if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+	if authcheck['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
         return error(ValueError('Wrong issuer.'))
 	#if all checks pass, theyre good
 	return success('token validated')	
