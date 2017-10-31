@@ -142,14 +142,10 @@ function deleteNote(){
     console.log('----------------Deleting notes----------------');    
     var deleteID = $(this).parents('.note')[0].id; // == get ID.toString() of deleted note
     
+    // check if the note's text has date and delete the event accordingly
+
     console.log(deleteID);
-    console.log(noteCalendarIDs);
-    for (index = 0; index < noteCalendarIDs.length; index++) {
-        if (noteCalendarIDs[index] == 'note' + deleteID) {
-            var noteCalendarIDs = noteCalendarIDs.slice(index, index+1);
-            $('#calendar_full').fullCalendar('removeEvents', eventID, true);
-        }
-    }
+
     if(deleteID != '0'){
         var toSend = {"_id" : deleteID};
         $.ajax({
@@ -175,13 +171,6 @@ function deleteNote(){
     noteCounter = noteCounter - 1;
     console.log('note count: ', noteCounter);    
     $(this).parents('.note').remove(); // remove the note on click of corresponding x button
-    
-    // var index = IDarray.indexOf(deleteID); // get index of deleted note's ID
-    // if (index > -1) {
-    //     IDarray.splice(index, 1); // remove the deleted note's ID from the ID array
-    // }
-    // console.log('Deleted ID: ' + $(this).parents('.note')[0].id); // print out the deleted ID                        
-    // console.log('ID array: ' + IDarray); // print out current ID array
 };
 /*----------------------------------Load Note----------------------------------*/
 function loadNote(title, content, ID, Xaxis, Yaxis) {
@@ -199,10 +188,6 @@ function loadNote(title, content, ID, Xaxis, Yaxis) {
                         +	'</div> '
                         +'</div>';
 
-    // IDarray.push(ID.toString()); // push the added note's ID into the ID array
-    // console.log('ID array: ' + IDarray); // print out current ID array
-    // checkID.push(ID.toString());
-
     $(noteTemp).hide().appendTo("#board").show("fade", 300).draggable().on('dragstart',
         function(){
             $(this).zIndex(++noteZindex);
@@ -218,10 +203,7 @@ function loadNote(title, content, ID, Xaxis, Yaxis) {
 };
 /*----------------------------------New Note----------------------------------*/
 function newNote() {
-        // var arrayLength = IDarray.length;
-        // if(arrayLength < 4){
-        // var ID = Math.floor((Math.random() * 1000) + 1); // random number between 1 and 1000
-        var ID = 0;
+        var ID = 0; // To delete unsaved note
         var Xaxis, Yaxis;
         console.log('note count: ',noteCounter);
         if(noteCounter >= 6){
@@ -246,9 +228,6 @@ function newNote() {
                         +	'</div> '
                         +'</div>';
 
-        // IDarray.push(ID.toString()); // push the added note's ID into the ID array
-        // console.log('ID array: ' + IDarray); // print out current ID array
-                        
         $(noteTemp).hide().appendTo("#board").show("fade", 300).draggable().on('dragstart',
             function(){
                 $(this).zIndex(++noteZindex);
@@ -291,28 +270,27 @@ function editNote() {
     console.log('Text: ', eText);
     console.log('Positions: ', eX,eY);
     console.log('ID: ', eID);
-    console.log(noteCalendarIDs);
-    for (index = 0; index < noteCalendarIDs.length; index++) {
-        if (noteCalendarIDs[index] == eID) {
-            var noteCalendarIDs = noteCalendarIDs.slice(index, index+1);
-            $('#calendar_full').fullCalendar('removeEvents', eventID, true);
-        }
+
+    // delete the previous event if it exist!!!!!!!!!!!!!!!! SOLUTION : USE NOTEID!!!!!!!!!!!!
+
+    var results = chrono.parse(eText);
+    var newElement, toSend;
+ 
+    if (results.length != 0){
+        if(results[0].end == null){
+            newElement = {id: 'note1', title : eTitle, start : results[0].start.date()};
+            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }   
+        else{
+            newElement = {id: 'note1', title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }      
+        $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
     }
-    var dateformat = [eText.match(/\d{2}([/.])\d{2}\1\d{4}/g), eText.match(/\d{4}([/.])\d{2}\1\d{2}/g), eText.match(/^\d{2}-\d{2}-\d{4}$/), eText.match(/^\d{4}-\d{2}-\d{2}$/)];
+    else {
+        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+    }    
     
-    console.log(dateformat);
-    var i = 0;
-    while(i < dateformat.length){   
-        if (dateformat[i]!=null) {
-            noteCalendarIDs.push('note1');  // Add the new note id associated with the calendar to the array
-            var newElement = {id: 'note1', title : eTitle, start : moment(dateformat[i][0], "MM-DD-YYYY"), allDay: true};
-            $('#calendar_full').fullCalendar('renderEvent', newElement , true);
-            i = dateformat.length;
-        }
-        i++;
-    }
-    
-    var toSend = {"username": username, "title": eTitle, "_id" : eID, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                
     $.ajax({
       url: 'https://ubcse442tada.com/edit_note',
       type: "post",
@@ -333,23 +311,6 @@ function editNote() {
       },
     });
   }
-/*----------------------------------Date Format----------------------------------*/
-var dateFormats = {
-   "iso_int" : "YYYY-MM-DD",
-   "short_date" : "DD/MM/YYYY",
-   "iso_date_time": "YYYY-MM-DDTHH:MM:SS",
-   "iso_date_time_utc": "YYYY-MM-DDTHH:MM:SSZ"
-    //define other well known formats if you want
-}
-  
-function getFormat(d){
-  for (var prop in dateFormats) {
-       if(moment(d, dateFormats[prop],true).isValid()){
-          return dateFormats[prop];
-       }
-  }
-  return null;
-}
 /*----------------------------------Save Note----------------------------------*/
 function saveNote(){
     console.log('----------------Saving notes----------------');
@@ -374,24 +335,24 @@ function saveNote(){
 
     var testID = "1";
     $this.parent().attr("id", testID);
+    
+    var results = chrono.parse(eText);
+    var newElement, toSend;
  
-    var dateformat = [eText.match(/\d{2}([/.])\d{2}\1\d{4}/g), eText.match(/\d{4}([/.])\d{2}\1\d{2}/g), eText.match(/^\d{2}-\d{2}-\d{4}$/), eText.match(/^\d{4}-\d{2}-\d{2}$/)];
-
-    console.log(dateformat);
-    console.log(noteCalendarIDs);
-    var i = 0;
-    while(i < dateformat.length){   
-        if (dateformat[i]!=null) {
-            noteCalendarIDs.push('note1');  // Add the new note id associated with the calendar to the array
-            console.log(noteCalendarIDs);
-            var newElement = {id: 'note1', title : eTitle, start : moment(dateformat[i][0], "MM-DD-YYYY"), allDay: true};
-            $('#calendar_full').fullCalendar('renderEvent', newElement , true);
-            i = dateformat.length;
-        }
-        i++;
+    if (results.length != 0){
+        if(results[0].end == null){
+            newElement = {id: 'note1', title : eTitle, start : results[0].start.date()};
+            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }   
+        else{
+            newElement = {id: 'note1', title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }      
+        $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
     }
-
-    var toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};            
+    else {
+        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+    }
     $.ajax({
         url: 'https://ubcse442tada.com/add_note',
         type: "post",
@@ -422,59 +383,3 @@ function saveNote(){
     $('.edit').click(editNote); // enable edit functionality onclick of edit button
     $(this).remove(); // remove the save button 
 };
-// function saveNotes() {
-//     console.log('Saving notes...');
-
-//     // get all textarea ID for title named as titleID + number
-//     var IDtitles = $('textarea[id^="titleID"]').filter(
-//         function(){
-//             return this.id.match(/\d+$/);
-//         });
-
-//     // get all textarea ID for text named as textID + number
-//     var IDtexts = $('textarea[id^="textID"]').filter(
-//         function(){
-//            return this.id.match(/\d+$/);
-//         });
-        
-//     for(var i = 0; i< IDtitles.length; i++){
-//         var checksum = 0;
-
-//         var tempTitle = IDtitles[i].id; // id of title of each note
-//         var tempText = IDtexts[i].id; // id of text of each note
-
-//         // console.log('Saved titleID: ' + tempTitle); 
-//         // console.log('Saved textID: ' + tempText);
-            
-//         var eTitle = document.getElementById(tempTitle).value; // get the value inside of the textarea.title of each note
-//         var eText = document.getElementById(tempText).value; // get the value inside of the textarea.text of each note
-//         var eID = tempTitle.replace('titleID',''); // extract only the ID string from the string of titleID (for loadNote)
-                
-//         console.log('Saved ID: ' + eID);           
-//         console.log('Saved title: ' + eTitle);
-//         console.log('Saved text: ' + eText);
-
-        
-//         for(var j = 0; j < checkID.length; j++){
-//             if(checkID[j] == eID){
-//                 checksum = 1; // don't send the data to dabase since it already exists
-//             }
-//         }
-
-//         if(checksum == 0){
-//             var toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}, {"text" : " "}], "x": 0, "y": 0, "noteID": eID, "color" : "#ffffff"};            
-//             // var toSend = {"type":"note","username":username,"title": eTitle, "text": eText, "x": 0, "y": 0, "noteID": eID}
-//             $.ajax({
-//                 url: 'http://localhost:5000/add',
-//                 type: "post",
-//                 data: JSON.stringify(toSend),
-//                 dataType: "json",
-//                 contentType: "application/json",
-//                 success: function() {
-//                 // If the JSON object was sent successfully, alert that notes are saved...
-//                 console.log('Successfully saved the notes');
-//                 }   
-//             });
-//         }
-//     } 
-// };
