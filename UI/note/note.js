@@ -131,6 +131,7 @@ $.fn.extend({
 /*----------------------------------Variables----------------------------------*/
 var noteZindex = 1;
 var noteCounter = 0;
+var noteCalendarIDs = []; // Array of ids for the calendar events associated with the notes for easy parsing
 var posX = [184, 184, 184, 402, 402, 402];
 var posY = [144, 334, 525, 144, 334, 525];
 
@@ -142,7 +143,13 @@ function deleteNote(){
     var deleteID = $(this).parents('.note')[0].id; // == get ID.toString() of deleted note
     
     console.log(deleteID);
-
+    console.log(noteCalendarIDs);
+    for (index = 0; index < noteCalendarIDs.length; index++) {
+        if (noteCalendarIDs[index] == 'note' + deleteID) {
+            var noteCalendarIDs = noteCalendarIDs.slice(index, index+1);
+            $('#calendar_full').fullCalendar('removeEvents', eventID, true);
+        }
+    }
     if(deleteID != '0'){
         var toSend = {"_id" : deleteID};
         $.ajax({
@@ -284,6 +291,26 @@ function editNote() {
     console.log('Text: ', eText);
     console.log('Positions: ', eX,eY);
     console.log('ID: ', eID);
+    console.log(noteCalendarIDs);
+    for (index = 0; index < noteCalendarIDs.length; index++) {
+        if (noteCalendarIDs[index] == eID) {
+            var noteCalendarIDs = noteCalendarIDs.slice(index, index+1);
+            $('#calendar_full').fullCalendar('removeEvents', eventID, true);
+        }
+    }
+    var dateformat = [eText.match(/\d{2}([/.])\d{2}\1\d{4}/g), eText.match(/\d{4}([/.])\d{2}\1\d{2}/g), eText.match(/^\d{2}-\d{2}-\d{4}$/), eText.match(/^\d{4}-\d{2}-\d{2}$/)];
+    
+    console.log(dateformat);
+    var i = 0;
+    while(i < dateformat.length){   
+        if (dateformat[i]!=null) {
+            noteCalendarIDs.push('note1');  // Add the new note id associated with the calendar to the array
+            var newElement = {id: 'note1', title : eTitle, start : moment(dateformat[i][0], "MM-DD-YYYY"), allDay: true};
+            $('#calendar_full').fullCalendar('renderEvent', newElement , true);
+            i = dateformat.length;
+        }
+        i++;
+    }
     
     var toSend = {"username": username, "title": eTitle, "_id" : eID, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                
     $.ajax({
@@ -351,41 +378,18 @@ function saveNote(){
     var dateformat = [eText.match(/\d{2}([/.])\d{2}\1\d{4}/g), eText.match(/\d{4}([/.])\d{2}\1\d{2}/g), eText.match(/^\d{2}-\d{2}-\d{4}$/), eText.match(/^\d{4}-\d{2}-\d{2}$/)];
 
     console.log(dateformat);
+    console.log(noteCalendarIDs);
     var i = 0;
     while(i < dateformat.length){   
         if (dateformat[i]!=null) {
-            var newElement = {title : eTitle, start : dateformat[i][0]};
+            noteCalendarIDs.push('note1');  // Add the new note id associated with the calendar to the array
+            console.log(noteCalendarIDs);
+            var newElement = {id: 'note1', title : eTitle, start : moment(dateformat[i][0], "MM-DD-YYYY"), allDay: true};
             $('#calendar_full').fullCalendar('renderEvent', newElement , true);
             i = dateformat.length;
         }
         i++;
     }
-
-    if (validateForm()) {
-        // $('#addEventModal').modal('toggle');
-        //   var toSend = {"username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
-        //   $.ajax({
-        //     url: 'https://ubcse442tada.com/add_event',
-        //     type: "post",
-        //     data: JSON.stringify(toSend),
-        //     dataType: "json",
-        //     contentType: "application/json",
-        //     success: function(response) {
-  
-        //         if ('success' in response) {
-        //         console.log(response['_id'])
-                // var newElement = {id : response['_id'], title : titleOfNewEvent, start : startDateOfNewEvent, end : endDateOfNewEvent};
-                //     $('#calendar_full').fullCalendar('renderEvent', newElement , true);
-        //         }
-        //         else if ('error' in response) {
-        //             console.log(response['error'])
-        //         }
-        //     },
-        //     error: function(response) {
-        //       console.log(response);
-        //     },
-        //   });
-      }
 
     var toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};            
     $.ajax({
