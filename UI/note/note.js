@@ -131,7 +131,6 @@ $.fn.extend({
 /*----------------------------------Variables----------------------------------*/
 var noteZindex = 1;
 var noteCounter = 0;
-var noteCalendarIDs = []; // Array of ids for the calendar events associated with the notes for easy parsing
 var posX = [184, 184, 184, 402, 402, 402];
 var posY = [144, 334, 525, 144, 334, 525];
 
@@ -142,7 +141,8 @@ function deleteNote(){
     console.log('----------------Deleting notes----------------');    
     var deleteID = $(this).parents('.note')[0].id; // == get ID.toString() of deleted note
     
-    // check if the note's text has date and delete the event accordingly
+    // delete the event that is associated with the note. If there is no date it doesn't matter.
+    $('#calendar_full').fullCalendar('removeEvents', "note" + deleteID, true);
 
     console.log(deleteID);
 
@@ -271,7 +271,8 @@ function editNote() {
     console.log('Positions: ', eX,eY);
     console.log('ID: ', eID);
 
-    // delete the previous event if it exist!!!!!!!!!!!!!!!! SOLUTION : USE NOTEID!!!!!!!!!!!!
+    // delete the event that is associated with the note. If there is no date it doesn't matter.
+    $('#calendar_full').fullCalendar('removeEvents', "note" + eID, true);
 
     var results = chrono.parse(eText);
     var newElement, toSend;
