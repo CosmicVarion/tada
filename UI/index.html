@@ -109,7 +109,7 @@
 	var colorOfNewEvent = document.getElementById("eventColor").value;
     if (validateForm()) {
       $('#addEventModal').modal('toggle');
-		var colorHexValue;
+		var colorHexValue="#ffffff";
 		if(colorOfNewEvent == "red"){colorHexValue ="#ff0000";}
 		if(colorOfNewEvent == "blue"){colorHexValue ="#0000ff";}
 		if(colorOfNewEvent == "green"){colorHexValue ="#00ff00";}
@@ -527,7 +527,11 @@
 			<div class="form-inline" style="padding-top: 10px; padding-bottom: 10px">
               <label for="eventColor" class="col-sm-4 control-label">Color: </label>
               <div class="col-sm-8">
-                <input type="text" id="eventColor" name="eventColor" class="form-control" placeholder="red / blue / green">
+                <select id="eventColor" name="eventColor" class="form-control" >
+				<option value="red">Red</option>
+				<option value="blue">Blue</option>
+				<option value="green">Green</option>
+			    </select>
                 <div id="colormsg" style="color:Red;display:none">Please input a valid color</div>
               </div>
             </div>
