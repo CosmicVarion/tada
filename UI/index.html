@@ -5,62 +5,32 @@
 <meta charset="utf-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<!--
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
+
 <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+
 {% assets "js" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
+
 {% assets "css" %}
     <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
 {% endassets %}
--->
-<!-- externally linked --><!--
-<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
--->
-<!-- GOOGLE OAUTH -->
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
 
-
-<!-- CSS -->
-<link rel='stylesheet' href='fullcalendar/fullcalendar.css' />
-<link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
-<link rel='stylesheet' href='layout/styles/bootstrap.css' />
-<link rel="stylesheet" href="layout/styles/jquery-ui.css" />
-<link rel="stylesheet" href="layout/styles/bootstrap-datetimepicker.css" />
-
-<!-- JAVASCRIPT -->
-<script src='fullcalendar/lib/jquery.min.js'></script>
-<script src='fullcalendar/lib/moment.min.js'></script>
-<script src='fullcalendar/fullcalendar.js'></script>
-<script src='layout/scripts/bootstrap-datetimepicker.js'></script>
-<script src="bower_components/chrono/chrono.min.js"></script>  
-
-<link href='note/note.css'  rel='stylesheet' type='text/css'>
-<script src='note/note.js'></script>
-
-<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
-
-<script src='layout/scripts/bootstrap.js'></script>
-
-<script src="layout/scripts/jquery.placeholder.min.js"></script>
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">-->
 
 <script type="text/javascript">
-$(document).ready(function() {
-  $("#board").height($(document).height());
-  $("#add_new").click(newNote);
-  $("#save_note").click(saveNote);
-  $('#startTimeCalendar').datetimepicker();
-  $('#endTimeCalendar').datetimepicker();
-});
-
+  $(document).ready(function() {
+  	$("#board").height($(document).height());
+	  $("#add_new").click(newNote);
+    $("#save_note").click(saveNote);
+    $('#startTimeCalendar').datetimepicker();
+    $('#endTimeCalendar').datetimepicker();
+  });
 
   function validateForm() {
     var eventTitle = document.getElementById("eventTitle").value;
@@ -303,7 +273,7 @@ $(document).ready(function() {
             <li class="list-inline-item">
               <!--<a href="#" class="btn btn-secondary btn-lg">-->
                 <!--<i class="fa fa-google fa-fw"></i>-->
-                <button class="btn btn-secondary my-2 my-sm-0" onclick="signInFake()">Sign In</button></h1>
+                <div class="g-signin2" data-onsuccess="onSignIn" style="height: 50px; width: 180px;"></div>
                 <!-- <span class="network-name">Sign-In</span> -->
                 <!--<span class="network-name">Sign-In</span>-->
               <!--</a>-->
