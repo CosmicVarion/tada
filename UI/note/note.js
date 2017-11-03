@@ -140,13 +140,13 @@ var posY = [144, 334, 525, 144, 334, 525];
 function deleteNote(){
     console.log('----------------Deleting notes----------------');    
     var deleteID = $(this).parents('.note')[0].id; // == get ID.toString() of deleted note
-    
-    // delete the event that is associated with the note. If there is no date it doesn't matter.
-    $('#calendar_full').fullCalendar('removeEvents', "note" + deleteID, true);
 
     console.log(deleteID);
 
     if(deleteID != '0'){
+        // delete the event that is associated with the note. If there is no date it doesn't matter.
+        $('#calendar_full').fullCalendar('removeEvents', "note" + deleteID, true);
+
         var toSend = {"_id" : deleteID};
         $.ajax({
           url: 'https://ubcse442tada.com/delete_note',
@@ -337,23 +337,6 @@ function saveNote(){
     var testID = "1";
     $this.parent().attr("id", testID);
     
-    var results = chrono.parse(eText);
-    var newElement, toSend;
- 
-    if (results.length != 0){
-        if(results[0].end == null){
-            newElement = {id: 'note1', title : eTitle, start : results[0].start.date()};
-            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
-        }   
-        else{
-            newElement = {id: 'note1', title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
-        }      
-        $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
-    }
-    else {
-        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
-    }
     $.ajax({
         url: 'https://ubcse442tada.com/add_note',
         type: "post",
@@ -369,6 +352,24 @@ function saveNote(){
                 console.log('assigned ID: ',newID);
                 document.getElementById("1").id = newID;
                 console.log(document.getElementById(newID));
+
+                var results = chrono.parse(eText);
+                var newElement, toSend;
+             
+                if (results.length != 0){
+                    if(results[0].end == null){
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};
+                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                    }   
+                    else{
+                        newElement = {id: 'note1', title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                    }      
+                    $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
+                }
+                else {
+                    toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+                }
             }
             else if ('error' in response) {
                 console.log(response['error'])
