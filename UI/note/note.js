@@ -238,15 +238,25 @@ function newNote() {
                         + 		'<textarea class="cnt" placeholder="Enter note description"></textarea>'
                         +	'</div> '
                         +'</div>';
-
-        // IDarray.push(ID.toString()); // push the added note's ID into the ID array
-        // console.log('ID array: ' + IDarray); // print out current ID array
-                        
-        $(noteTemp).hide().appendTo("#board").show("fade", 300).draggable().on('dragstart',
+   
+        $(noteTemp).hide().appendTo("#board").show("fade", 300).draggable('option',
+            'containment',
+            [ containmentX1, containmentY1, containmentX2, containmentY2]
+        ).on('dragstart',
             function(){
+                var containmentX1 = $(this).parent().offset().left;
+                var containmentY1 = $(this).parent().offset().top;
+                var containmentX2 =  ($(this).parent().outerWidth() + $(this).parent().offset().left - $(this).outerWidth())
+                var containmentY2 = ($(this).parent().outerHeight() + $(this).parent().offset().top - $(this).outerHeight())                 
                 $(this).zIndex(++noteZindex);
+                $(this).draggable('option',
+                'containment',
+                [ containmentX1, containmentY1, containmentX2, containmentY2]);
+
             }); // show the new note to the UI
 
+
+            
         console.log($(noteTemp)[0]);
         //position the note according to the array
        
