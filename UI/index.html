@@ -261,8 +261,16 @@
         createCalendar(eventData);
 
 	      for (i = 0; i < userData['notes'].length; i++) {
-              loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y);
+          try {
+            // Load the note with start and end time
+            loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, userData.notes[i].start, userData.notes[i].end);
+          }catch(e){
+            if(e){
+              // If there is no start or end time ignore those fields
+              loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, "", "");
+            }
           }
+        }
       },
       error: function(response) {
         console.log(response);

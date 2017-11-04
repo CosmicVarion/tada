@@ -173,8 +173,15 @@ function deleteNote(){
     $(this).parents('.note').remove(); // remove the note on click of corresponding x button
 };
 /*----------------------------------Load Note----------------------------------*/
-function loadNote(title, content, ID, Xaxis, Yaxis) {
-    
+function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime) {
+    if (startTime != "") {
+        var newElement;
+        if (endTime != "") {
+            newElement = {id: "note" + ID, title : title, start : startTime, end : endTime};
+        }
+        else {newElement = {id: "note" + ID, title : title, start : startTime};}
+        $('#calendar_full').fullCalendar('renderEvent', newElement , true);
+    }  
 
     Xaxis = Xaxis-190;
     Yaxis = Yaxis-130;
@@ -279,12 +286,12 @@ function editNote() {
  
     if (results.length != 0){
         if(results[0].end == null){
-            newElement = {id: 'note1', title : eTitle, start : results[0].start.date()};
-            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date()};
+            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }   
         else{
-            newElement = {id: 'note1', title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }      
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
     }
@@ -359,11 +366,11 @@ function saveNote(){
                 if (results.length != 0){
                     if(results[0].end == null){
                         newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};
-                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
                     }   
                     else{
-                        newElement = {id: 'note1', title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
                     }      
                     $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
                 }
