@@ -147,7 +147,7 @@ function deleteNote(){
         // delete the event that is associated with the note. If there is no date it doesn't matter.
         $('#calendar_full').fullCalendar('removeEvents', "note" + deleteID, true);
 
-        var toSend = {"_id" : deleteID};
+        var toSend = {"auth_token" : auth_token, "_id" : deleteID};
         $.ajax({
           url: 'https://ubcse442tada.com/delete_note',
           type: "post",
@@ -287,16 +287,16 @@ function editNote() {
     if (results.length != 0){
         if(results[0].end == null){
             newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date()};
-            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }   
         else{
             newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-            toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }      
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
     }
     else {
-        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
     }    
     
     $.ajax({
@@ -366,16 +366,16 @@ function saveNote(){
                 if (results.length != 0){
                     if(results[0].end == null){
                         newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};
-                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
                     }   
                     else{
                         newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-                        toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
                     }      
                     $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
                 }
                 else {
-                    toSend = {"username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+                    toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
                 }
             }
             else if ('error' in response) {

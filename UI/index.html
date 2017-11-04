@@ -128,6 +128,7 @@
   }
 
   var username;
+  var auth_token;
 
   // Function called when Save button in the Add New Event modal is pressed
   function addEvent() {
@@ -138,7 +139,7 @@
 
     if (validateForm()) {
       $('#addEventModal').modal('toggle');
-        var toSend = {"username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
+        var toSend = {"auth_token" : auth_token, "username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
         $.ajax({
           url: 'https://ubcse442tada.com/add_event',
           type: "post",
@@ -173,7 +174,7 @@
       $('#calendar_full').fullCalendar('updateEvent', event);
     }
 
-    var toSend = {"username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : "#ffffff"};
+    var toSend = {"auth_token" : auth_token, "username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : "#ffffff"};
     $.ajax({
       url: 'https://ubcse442tada.com/edit_event',
       type: "post",
@@ -200,7 +201,7 @@
 
 
     console.log(eventID);
-    var toSend = {"_id" : eventID};
+    var toSend = {"auth_token" : auth_token, "_id" : eventID};
     $.ajax({
       url: 'https://ubcse442tada.com/delete_event',
       type: "post",
@@ -226,12 +227,12 @@
   function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     username = profile.getEmail();
-    console.log('Email: ' + username);
+    auth_token = googleUser.getAuthResponse().id_token;
 
     $.ajax({
       url: 'https://ubcse442tada.com/login',
       type: "post",
-      data: JSON.stringify({"username": username}),
+      data: JSON.stringify({"auth_token" : auth_token, "username": username}),
       dataType: "json",
       contentType: "application/json",
       success: function(userData) {
