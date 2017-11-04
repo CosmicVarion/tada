@@ -343,6 +343,21 @@ function saveNote(){
 
     var testID = "1";
     $this.parent().attr("id", testID);
+
+    var results = chrono.parse(eText);
+    var newElement, toSend;
+ 
+    if (results.length != 0){
+        if(results[0].end == null){
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }   
+        else{
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }            
+    }
+    else {
+        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+    }
     
     $.ajax({
         url: 'https://test.ubcse442tada.com/add_note',
@@ -359,23 +374,15 @@ function saveNote(){
                 console.log('assigned ID: ',newID);
                 document.getElementById("1").id = newID;
                 console.log(document.getElementById(newID));
-
-                var results = chrono.parse(eText);
-                var newElement, toSend;
              
                 if (results.length != 0){
                     if(results[0].end == null){
-                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};
-                        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};                     
                     }   
                     else{
-                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-                        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};                     
                     }      
                     $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
-                }
-                else {
-                    toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
                 }
             }
             else if ('error' in response) {
