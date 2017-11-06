@@ -19,11 +19,14 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">-->
 
+<script src="https://cdn.jsdelivr.net/npm/chrono-node@1.3.1/chrono.min.js"></script>
+
+
 <script type="text/javascript">
   $(document).ready(function() {
   	$("#board").height($(document).height());
-    $("#add_new").click(newNote);
-    // $("#save_note").click(saveNote);
+	$("#add_new").click(newNote);
+    //$("#save_note").click(saveNote);
     $('#startTimeCalendar').datetimepicker();
     $('#endTimeCalendar').datetimepicker();
   });
@@ -227,16 +230,17 @@
           }
         }
         createCalendar(eventData);
-
+        console.log(userData['notes']);
 	      for (i = 0; i < userData['notes'].length; i++) {
           try {
             // Load the note with start and end time
-            loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, userData.notes[i].start, userData.notes[i].end);
-          }catch(e){
-            if(e){
+            console.log('trying!');
+            loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, userData.notes[i].noteList[0].start, userData.notes[i].noteList[0].end);
+          }
+          catch(e){
+            console.log('catching!');
               // If there is no start or end time ignore those fields
               loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, "", "");
-            }
           }
         }
       },

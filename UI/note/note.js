@@ -173,13 +173,20 @@ function deleteNote(){
     $(this).parents('.note').remove(); // remove the note on click of corresponding x button
 };
 /*----------------------------------Load Note----------------------------------*/
-function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime) {
-    if (startTime != "") {
+function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime) {    
+    console.log('start time: ', startTime);
+    console.log('end time: ', endTime);    
+
+    if (startTime !== "") {
+        var resultStart = chrono.parse(startTime);
         var newElement;
-        if (endTime != "") {
-            newElement = {id: "note" + ID, title : title, start : startTime, end : endTime};
+        if (endTime !== "") {
+            var resultEnd = chrono.parse(endTime);
+            newElement = {id: "note" + ID, title : title, start : resultStart[0].start.date(), end : resultEnd[0].start.date()};
         }
-        else {newElement = {id: "note" + ID, title : title, start : startTime};}
+        else {
+            newElement = {id: "note" + ID, title : title, start : resultStart[0].start.date()};
+        }
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);
     }  
 
@@ -287,16 +294,16 @@ function editNote() {
     if (results.length != 0){
         if(results[0].end == null){
             newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date()};
-            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }   
         else{
             newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "_id": eID,"title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }      
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
     }
     else {
-        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+        toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
     }    
     
     $.ajax({
@@ -345,15 +352,18 @@ function saveNote(){
     $this.parent().attr("id", testID);
 
     var results = chrono.parse(eText);
-    var newElement, toSend;
- 
+    var newElement;
+    var toSend;
+
     if (results.length != 0){
         if(results[0].end == null){
-            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
         }   
         else{
-            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date(), "end" : results[0].end.date()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
-        }            
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+        }
+        console.log(results[0].start.date().toString())
+                    
     }
     else {
         toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
@@ -380,7 +390,7 @@ function saveNote(){
                         newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};                     
                     }   
                     else{
-                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};                     
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
                     }      
                     $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
                 }
