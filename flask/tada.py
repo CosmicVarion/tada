@@ -11,8 +11,8 @@ from google.auth.transport import requests
 
 
 app = Flask(__name__,
-            template_folder='/var/www/test.ubcse442tada.com/tada/UI',
-            static_folder='/var/www/test.ubcse442tada.com/tada/UI')
+            template_folder='/var/www/ubcse442tada.com/tada/UI',
+            static_folder='/var/www/ubcse442tada.com/tada/UI')
 
 application = app
 
@@ -73,7 +73,7 @@ def root():
 # images
 @app.route('/img/<path:filename>')
 def send_img(filename):
-    return send_from_directory('/var/www/test.ubcse442tada.com/tada/UI/img',filename,mimetype='image/png')
+    return send_from_directory('/var/www/ubcse442tada.com/tada/UI/img',filename,mimetype='image/png')
 
 
 

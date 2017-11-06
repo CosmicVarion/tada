@@ -111,7 +111,7 @@
       $('#addEventModal').modal('toggle');
         var toSend = {"auth_token" : auth_token, "username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
         $.ajax({
-          url: 'https://test.ubcse442tada.com/add_event',
+          url: 'https://ubcse442tada.com/add_event',
           type: "post",
           data: JSON.stringify(toSend),
           dataType: "json",
@@ -146,7 +146,7 @@
 
     var toSend = {"auth_token" : auth_token, "username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : "#ffffff"};
     $.ajax({
-      url: 'https://test.ubcse442tada.com/edit_event',
+      url: 'https://ubcse442tada.com/edit_event',
       type: "post",
       data: JSON.stringify(toSend),
       dataType: "json",
@@ -173,7 +173,7 @@
     console.log(eventID);
     var toSend = {"auth_token" : auth_token, "_id" : eventID};
     $.ajax({
-      url: 'https://test.ubcse442tada.com/delete_event',
+      url: 'https://ubcse442tada.com/delete_event',
       type: "post",
       data: JSON.stringify(toSend),
       dataType: "json",
@@ -200,7 +200,7 @@
     auth_token = googleUser.getAuthResponse().id_token;
 
     $.ajax({
-      url: 'https://test.ubcse442tada.com/login',
+      url: 'https://ubcse442tada.com/login',
       type: "post",
       data: JSON.stringify({"auth_token" : auth_token, "username": username}),
       dataType: "json",
@@ -316,7 +316,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/UI.png" alt="">
+            <img class="img-fluid" src="https://ubcse442tada.com/img/UI.png" alt="">
           </div>
         </div>
 
@@ -339,7 +339,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/login.png" alt="" width="250">
+            <img class="img-fluid" src="https://ubcse442tada.com/img/login.png" alt="" width="250">
           </div>
         </div>
 
@@ -365,7 +365,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto ">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/note.png" alt="">
+            <img class="img-fluid" src="https://ubcse442tada.com/img/note.png" alt="">
           </div>
         </div>
 
@@ -391,7 +391,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto ">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/calendar.png" alt="">
+            <img class="img-fluid" src="https://ubcse442tada.com/img/calendar.png" alt="">
           </div>
         </div>
 
@@ -413,7 +413,7 @@
                     </p>
                   </div>
                   <div class="col-lg-5 mr-auto ">
-                    <img class="img-fluid" src="https://test.ubcse442tada.com/img/week.png" alt="">
+                    <img class="img-fluid" src="https://ubcse442tada.com/img/week.png" alt="">
                   </div>
                 </div>
 
