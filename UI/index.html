@@ -1,33 +1,32 @@
 <!-- <!DOCTYPE html> -->
 <html>
-<head>
-<title>TaDa</title>
-<meta charset="utf-8">
+  <head>
+  <title>TaDa</title>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
+  <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+  {% assets "js" %}
+      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+  {% assets "css" %}
+      <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
+  {% endassets %}
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
-
-<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
-
-{% assets "js" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-
-{% assets "css" %}
-    <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
-{% endassets %}
-
-
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">-->
+
+<script src="https://cdn.jsdelivr.net/npm/chrono-node@1.3.1/chrono.min.js"></script>
+
 
 <script type="text/javascript">
   $(document).ready(function() {
   	$("#board").height($(document).height());
-	  $("#add_new").click(newNote);
-    $("#save_note").click(saveNote);
+	$("#add_new").click(newNote);
+    //$("#save_note").click(saveNote);
     $('#startTimeCalendar').datetimepicker();
     $('#endTimeCalendar').datetimepicker();
   });
@@ -69,7 +68,6 @@
             $('#deleteModalButton').removeAttr('data-toggle');
             document.getElementById("titlemsg").style.display="none";
             document.getElementById("startmsg").style.display="none";
-            document.getElementById("endmsg").style.display="none";
             document.getElementById("saveModalButton").onclick = function(){addEvent()};
             $('#addEventModal').modal('show');
           }
@@ -82,14 +80,17 @@
       },
       events: eventData,
       eventClick: function(calEvent) {
-        document.getElementById("eventTitle").value = calEvent.title;
-        document.getElementById("startTimeCalendar").value = calEvent.start.format('YYYY-MM-DD HH:mm');
-        document.getElementById("endTimeCalendar").value = calEvent.end.format('YYYY-MM-DD HH:mm');
-        $('#deleteModalButton').removeClass('disabled');
-        $('#deleteModalButton').attr("data-toggle", "modal");
-        document.getElementById("deleteModalButton").onclick = function(){deleteEvent(calEvent.id)};
-        document.getElementById("saveModalButton").onclick = function(){editEvent(calEvent)};
-        $('#addEventModal').modal('show');
+        if (!calEvent.id.includes("note")) {
+          document.getElementById("eventTitle").value = calEvent.title;
+          document.getElementById("startTimeCalendar").value = calEvent.start.format('YYYY-MM-DD HH:mm');
+          document.getElementById("endTimeCalendar").value = calEvent.end.format('YYYY-MM-DD HH:mm');
+
+          $('#deleteModalButton').removeClass('disabled');
+          $('#deleteModalButton').attr("data-toggle", "modal");
+          document.getElementById("deleteModalButton").onclick = function(){deleteEvent(calEvent.id)};
+          document.getElementById("saveModalButton").onclick = function(){editEvent(calEvent)};
+          $('#addEventModal').modal('show');
+        }
       },
       height: 600, // would like to change this to parent
       fixedWeekCount: false
@@ -97,6 +98,7 @@
   }
 
   var username;
+  var auth_token;
 
   // Function called when Save button in the Add New Event modal is pressed
   function addEvent() {
@@ -107,7 +109,7 @@
 
     if (validateForm()) {
       $('#addEventModal').modal('toggle');
-        var toSend = {"username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
+        var toSend = {"auth_token" : auth_token, "username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
         $.ajax({
           url: 'https://ubcse442tada.com/add_event',
           type: "post",
@@ -142,7 +144,7 @@
       $('#calendar_full').fullCalendar('updateEvent', event);
     }
 
-    var toSend = {"username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : "#ffffff"};
+    var toSend = {"auth_token" : auth_token, "username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : "#ffffff"};
     $.ajax({
       url: 'https://ubcse442tada.com/edit_event',
       type: "post",
@@ -169,7 +171,7 @@
 
 
     console.log(eventID);
-    var toSend = {"_id" : eventID};
+    var toSend = {"auth_token" : auth_token, "_id" : eventID};
     $.ajax({
       url: 'https://ubcse442tada.com/delete_event',
       type: "post",
@@ -195,12 +197,12 @@
   function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     username = profile.getEmail();
-    console.log('Email: ' + username);
+    auth_token = googleUser.getAuthResponse().id_token;
 
     $.ajax({
       url: 'https://ubcse442tada.com/login',
       type: "post",
-      data: JSON.stringify({"username": username}),
+      data: JSON.stringify({"auth_token" : auth_token, "username": username}),
       dataType: "json",
       contentType: "application/json",
       success: function(userData) {
@@ -228,10 +230,19 @@
           }
         }
         createCalendar(eventData);
-
+        console.log(userData['notes']);
 	      for (i = 0; i < userData['notes'].length; i++) {
-              loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y);
+          try {
+            // Load the note with start and end time
+            console.log('trying!');
+            loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, userData.notes[i].noteList[0].start, userData.notes[i].noteList[0].end);
           }
+          catch(e){
+            console.log('catching!');
+              // If there is no start or end time ignore those fields
+              loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, "", "");
+          }
+        }
       },
       error: function(response) {
         console.log(response);
@@ -273,6 +284,7 @@
             <li class="list-inline-item">
               <!--<a href="#" class="btn btn-secondary btn-lg">-->
                 <!--<i class="fa fa-google fa-fw"></i>-->
+                <!--<button class="btn btn-secondary my-2 my-sm-0" onclick="signInFake()">Sign In</button></h1>-->
                 <div class="g-signin2" data-onsuccess="onSignIn" style="height: 50px; width: 180px;"></div>
                 <!-- <span class="network-name">Sign-In</span> -->
                 <!--<span class="network-name">Sign-In</span>-->

@@ -3,12 +3,16 @@ from flask_assets import Environment, Bundle
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 
+from google.oauth2 import id_token #Make sure these 3 are actually installed
+from google.auth.transport import requests
+
+
 
 
 
 app = Flask(__name__,
-            template_folder='/var/www/html/tada/UI',
-            static_folder='/var/www/html/tada/UI')
+            template_folder='/var/www/ubcse442tada.com/tada/UI',
+            static_folder='/var/www/ubcse442tada.com/tada/UI')
 
 application = app
 
@@ -35,7 +39,6 @@ css = Bundle('fullcalendar/fullcalendar.css',
              'layout/styles/bootstrap-datepicker.css',
              'layout/styles/bootstrap-datetimepicker.css',
              'note/note.css',
-             'vendor/font-awesome/css/font-awesome.css',
              'css/landing-page.css',
              output='gen/packed.css')
 assets.register('css',css)
@@ -62,7 +65,7 @@ def error(message):
 # home page
 @app.route('/')
 def root():
-	return render_template('index.html')
+    return render_template('index.html')
 
 
 
@@ -70,14 +73,14 @@ def root():
 # images
 @app.route('/img/<path:filename>')
 def send_img(filename):
-    return send_from_directory('/var/www/html/tada/UI/img',filename,mimetype='image/png')
+    return send_from_directory('/var/www/ubcse442tada.com/tada/UI/img',filename,mimetype='image/png')
 
 
 
 # font resources
-@app.route('/fonts/<path:filename>')
-def send_font(filename):
-    return send_from_directory('/var/www/html/tada/UI/vendor/font-awesome/fonts/',filename)
+# @app.route('/fonts/<path:filename>')
+# def send_font(filename):
+#     return send_from_directory('/var/www/html/tada/UI/vendor/font-awesome/fonts/',filename)
 
 
 
@@ -88,11 +91,17 @@ def add_note():
     json_str  = request.get_json()
     print(json_str)
     json_dict = dict(json_str)    
+
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
     
     _id = str(ObjectId())
     json_dict['_id'] = _id
 
-    try:	
+    try:    
         mongo.db.notes.insert_one(json_dict)
     except Exception as e:
         print(e)
@@ -109,13 +118,19 @@ def add_event():
     json_str  = request.get_json()
     print(json_str)
     json_dict = dict(json_str)
+
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
     
     _id = str(ObjectId())
     json_dict['_id'] = _id
     
     print(json_dict)
 
-    try:	
+    try:    
         mongo.db.events.insert_one(json_dict)
     except Exception as e:
         print(e)
@@ -133,7 +148,13 @@ def delete_note():
     print(json_str)
     json_dict = dict(json_str)    
 
-    try:	
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
+
+    try:    
         _id = json_dict['_id']
         print((mongo.db.notes.delete_one({'_id': _id})).deleted_count)
     except Exception as e:
@@ -149,10 +170,16 @@ def delete_note():
 @app.route('/delete_event',methods=['POST'])
 def delete_event():
     json_str  = request.get_json()
-    print(json_str)	
+    print(json_str)    
     json_dict = dict(json_str)    
 
-    try:	
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
+
+    try:    
         _id = json_dict['_id']
         print((mongo.db.events.delete_one({'_id': _id})).deleted_count)
     except Exception as e:
@@ -168,8 +195,14 @@ def delete_event():
 @app.route('/edit_note',methods=['POST'])
 def edit_note():
     json_str  = request.get_json()
-    print(json_str)	
+    print(json_str)    
     json_dict = dict(json_str)
+
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
 
     try:
         _id = json_dict['_id']
@@ -188,10 +221,16 @@ def edit_note():
 @app.route('/edit_event',methods=['POST'])
 def edit_event():
     json_str  = request.get_json()
-    print(json_str)	
+    print(json_str)    
     json_dict = dict(json_str)
 
-    try:	
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
+
+    try:    
         _id = json_dict['_id']
         del json_dict['_id']
         mongo.db.events.update_one({'_id': _id}, {'$set':json_dict})
@@ -208,11 +247,16 @@ def edit_event():
 @app.route('/login',methods=['POST'])
 def login():
     json_str  = request.get_json()
-    print(json_str)	
-    json_dict = dict(json_str)
+    print(json_str)
+    json_dict = dict(json_str)        
 
+    token = json_dict['auth_token']
+    usercheck = check_token(token)
+    if not usercheck:
+        content = 'Validation failed'
+        return content, 401
+        
     username = json_dict['username']
-    
     notes = [note for note in mongo.db.notes .find({"username": username})]
     for note in notes:
         note['_id'] = str(note['_id'])
@@ -222,6 +266,18 @@ def login():
         event['_id'] = str(event['_id'])    
     
     return jsonify({"notes": notes, "events": events})
+
+
+
+
+def check_token(token):
+    CLIENT_ID = '275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com'
+    try:
+        authcheck = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+    except Exception as e:
+        return False
+
+    return authcheck['iss'] in ['accounts.google.com', 'https://accounts.google.com']  
 
 
 
