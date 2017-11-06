@@ -202,11 +202,33 @@ function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime) {
                         +	'</div> '
                         +'</div>';
 
-    $(noteTemp).hide().appendTo("#board").show("fade", 300).draggable().on('dragstart',
+    var $containerEl = $(noteTemp).parent(),
+    $draggableEl = $(noteTemp).hide().appendTo("#board").show("fade", 300);
+
+    $draggableEl.each(
+    function(){
+        var containmentX1 = $(this).parent().offset().left;
+        var containmentY1 = $(this).parent().offset().top;
+        var containmentX2 =  ($(this).parent().outerWidth() + $(this).parent().offset().left - $(this).outerWidth())
+        var containmentY2 = ($(this).parent().outerHeight() + $(this).parent().offset().top - $(this).outerHeight())                 
+
+        $(this).draggable({
+            containment: [ containmentX1, containmentY1, containmentX2, containmentY2]
+        });
+    });
+
+    $draggableEl.on('dragstart',
         function(){
+            var containmentX1 = $(this).parent().offset().left;
+            var containmentY1 = $(this).parent().offset().top;
+            var containmentX2 =  ($(this).parent().outerWidth() + $(this).parent().offset().left - $(this).outerWidth())
+            var containmentY2 = ($(this).parent().outerHeight() + $(this).parent().offset().top - $(this).outerHeight())                 
             $(this).zIndex(++noteZindex);
-        }); // show the loaded note to the UI
-    
+            $(this).draggable('option',
+            'containment',
+            [ containmentX1, containmentY1, containmentX2, containmentY2]);
+    });
+
     noteCounter = noteCounter + 1;
     $('.remove').unbind().click(deleteNote); // onclick of delete button, trigger the deleteNote function
     // $('.save').click(saveNote);    
@@ -241,12 +263,34 @@ function newNote() {
                         + 		'<textarea class="cnt" placeholder="Enter note description"></textarea>'
                         +	'</div> '
                         +'</div>';
-
-        $(noteTemp).hide().appendTo("#board").show("fade", 300).draggable().on('dragstart',
+   
+        var $containerEl = $(noteTemp).parent(),
+            $draggableEl = $(noteTemp).hide().appendTo("#board").show("fade", 300);
+       
+        $draggableEl.each(
             function(){
-                $(this).zIndex(++noteZindex);
-            }); // show the new note to the UI
+                var containmentX1 = $(this).parent().offset().left;
+                var containmentY1 = $(this).parent().offset().top;
+                var containmentX2 =  ($(this).parent().outerWidth() + $(this).parent().offset().left - $(this).outerWidth())
+                var containmentY2 = ($(this).parent().outerHeight() + $(this).parent().offset().top - $(this).outerHeight())                 
+    
+                $(this).draggable({
+                    containment: [ containmentX1, containmentY1, containmentX2, containmentY2]
+                });
+        });
 
+        $draggableEl.on('dragstart',
+        function(){
+            var containmentX1 = $(this).parent().offset().left;
+            var containmentY1 = $(this).parent().offset().top;
+            var containmentX2 =  ($(this).parent().outerWidth() + $(this).parent().offset().left - $(this).outerWidth())
+            var containmentY2 = ($(this).parent().outerHeight() + $(this).parent().offset().top - $(this).outerHeight())                 
+            $(this).zIndex(++noteZindex);
+            $(this).draggable('option',
+            'containment',
+            [ containmentX1, containmentY1, containmentX2, containmentY2]);
+        });
+            
         console.log($(noteTemp)[0]);
         //position the note according to the array
        
