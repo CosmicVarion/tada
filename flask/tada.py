@@ -97,6 +97,7 @@ def add_note():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #removes the auth token from the dictionary/json
     
     _id = str(ObjectId())
     json_dict['_id'] = _id
@@ -124,6 +125,7 @@ def add_event():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #removes the auth token from the dictionary/json
     
     _id = str(ObjectId())
     json_dict['_id'] = _id
@@ -153,6 +155,7 @@ def delete_note():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #removes the auth token from the dictionary/json
 
     try:    
         _id = json_dict['_id']
@@ -178,6 +181,7 @@ def delete_event():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #removes the auth token from the dictionary/json
 
     try:    
         _id = json_dict['_id']
@@ -203,6 +207,7 @@ def edit_note():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #removes the auth token from the dictionary/json
 
     try:
         _id = json_dict['_id']
@@ -229,6 +234,7 @@ def edit_event():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #removes the auth token from the dictionary/json
 
     try:    
         _id = json_dict['_id']
@@ -255,6 +261,7 @@ def login():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
+    del json_dict['auth_token'] #Just in case this one is breaking things somehow
         
     username = json_dict['username']
     notes = [note for note in mongo.db.notes .find({"username": username})]
