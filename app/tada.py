@@ -19,7 +19,8 @@ application = app
 assets = Environment(app)
 
 # landing page javascript and css
-lp_js = Bundle('common/js/bootstrap.js',
+lp_js = Bundle('common/js/jquery.min.js',
+               'common/js/bootstrap.js',
                'common/js/jquery.backtotop.js',
                'common/js/jquery.mobilemenu.js',
                'common/js/jquery.placeholder.min.js',
@@ -27,8 +28,9 @@ lp_js = Bundle('common/js/bootstrap.js',
                output='gen/lp_packed.js')
 assets.register('landing_page_js',lp_js)
 
-lp_css = Bundle('common/css/layout.css',
-                'common/css/bootstrap.css',
+#'common/css/layout.css',
+
+lp_css = Bundle('common/css/bootstrap.css',
                 'common/css/jquery-ui.css',
                 'landing_page/css/landing-page.css',
                 output='gen/lp_packed.css')
@@ -36,15 +38,15 @@ assets.register('landing_page_css',lp_css)
 
 # app page javascript and css
 ap_js = Bundle('app_page/js/moment.min.js',
-               'app_page/js/jquery.min.js',
+               'common/js/jquery.min.js',
                'app_page/js/fullcalendar.js',
                'app_page/js/note.js',
                'common/js/bootstrap.js',
                'app_page/js/bootstrap-datepicker.js',
                'app_page/js/bootstrap-datetimepicker.js',
-               'common/jquery.backtotop.js',
-               'common/jquery.mobilemenu.js',
-               'common/jquery.placeholder.min.js',
+               'common/js/jquery.backtotop.js',
+               'common/js/jquery.mobilemenu.js',
+               'common/js/jquery.placeholder.min.js',
                'common/js/popper.min.js',
                output='gen/ap_packed.js')
 assets.register('app_page_js',ap_js)
@@ -81,9 +83,14 @@ def landing_page():
     return render_template('landing_page/landing_page.html')
 
 # images
-@app.route('/img/<path:filename>')
-def send_img(filename):
-    return send_from_directory('/var/www/test.ubcse442tada.com/tada/templates/landing_page/img',filename,mimetype='image/png')
+@app.route('/img/<path:filename>.png')
+def send_png(filename):
+    return send_from_directory('/var/www/test.ubcse442tada.com/tada/templates/landing_page/img',filename+'.png')
+
+@app.route('/img/<path:filename>.jpg')
+def send_jpg(filename):
+    return send_from_directory('/var/www/test.ubcse442tada.com/tada/templates/landing_page/img',filename+'.jpg')
+
 
 # app
 @app.route('/app')

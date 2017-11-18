@@ -149,7 +149,7 @@ function deleteNote(){
 
         var toSend = {"auth_token" : auth_token, "_id" : deleteID};
         $.ajax({
-          url: 'https://ubcse442tada.com/delete_note',
+          url: 'https://test.ubcse442tada.com/delete_note',
           type: "post",
           data: JSON.stringify(toSend),
           dataType: "json",
@@ -351,7 +351,7 @@ function editNote() {
     }    
     
     $.ajax({
-      url: 'https://ubcse442tada.com/edit_note',
+      url: 'https://test.ubcse442tada.com/edit_note',
       type: "post",
       data: JSON.stringify(toSend),
       dataType: "json",
@@ -414,7 +414,7 @@ function saveNote(){
     }
     
     $.ajax({
-        url: 'https://ubcse442tada.com/add_note',
+        url: 'https://test.ubcse442tada.com/add_note',
         type: "post",
         data: JSON.stringify(toSend),
         dataType: "json",

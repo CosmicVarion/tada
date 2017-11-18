@@ -6,7 +6,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
+<script>
+    function gapi_init() {
+        gapi.load('auth2', function() {
+            gapi.auth2.init();
+        });
+    }
+</script>
+
+  <script src="https://apis.google.com/js/platform.js?onload=gapi_init" async defer></script>
   <meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
   <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
   
@@ -24,13 +32,50 @@
 
 
 <script type="text/javascript">
-  $(document).ready(function() {
-  	$("#board").height($(document).height());
-	$("#add_new").click(newNote);
-    //$("#save_note").click(saveNote);
-    $('#startTimeCalendar').datetimepicker();
-    $('#endTimeCalendar').datetimepicker();
-  });
+    function gapi_init() {
+        gapi.load('auth2', function() {
+            gapi.auth2.init();
+        });
+    }    
+
+
+    window.onload = function() {
+        
+        $("#board").height($(document).height());
+        $("#add_new").click(newNote);
+        $('#startTimeCalendar').datetimepicker();
+        $('#endTimeCalendar').datetimepicker();
+        
+        username   = sessionStorage.getItem('username');
+        auth_token = sessionStorage.getItem('auth_token');
+        auth_instance = sessionStorage.getItem('auth_instance');        
+
+
+        var userData = JSON.parse(sessionStorage.getItem('userData'));
+
+        var eventData = [];
+        for (i = 0; i < userData['events'].length; i++) {
+            for (j = 0; j < userData.events[i].eventList.length; j++) {
+                eventData.push({'id' : userData.events[i]._id, 'title' : userData.events[i].title, 'start' : userData.events[i].eventList[j].start, 'end' : userData.events[i].eventList[j].end});
+            }
+        }
+        createCalendar(eventData);
+
+        for (i = 0; i < userData['notes'].length; i++) {
+            try {
+                // Load the note with start and end time
+                //console.log('trying!');
+
+                loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, userData.notes[i].noteList[0].start, userData.notes[i].noteList[0].end);
+            }
+            catch(e){
+                //console.log('catching!');
+                // If there is no start or end time ignore those fields
+                loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, "", "");
+            }
+        }
+
+    }
 
   function validateForm() {
     var eventTitle = document.getElementById("eventTitle").value;
@@ -98,8 +143,6 @@
     });
   }
 
-  var username;
-  var auth_token;
 
   // Function called when Save button in the Add New Event modal is pressed
   function addEvent() {
@@ -112,7 +155,7 @@
       $('#addEventModal').modal('toggle');
         var toSend = {"auth_token" : auth_token, "username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent}], "color" : "#ffffff"};
         $.ajax({
-          url: 'https://ubcse442tada.com/add_event',
+          url: 'https://test.ubcse442tada.com/add_event',
           type: "post",
           data: JSON.stringify(toSend),
           dataType: "json",
@@ -147,7 +190,7 @@
 
     var toSend = {"auth_token" : auth_token, "username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : "#ffffff"};
     $.ajax({
-      url: 'https://ubcse442tada.com/edit_event',
+      url: 'https://test.ubcse442tada.com/edit_event',
       type: "post",
       data: JSON.stringify(toSend),
       dataType: "json",
@@ -174,7 +217,7 @@
     console.log(eventID);
     var toSend = {"auth_token" : auth_token, "_id" : eventID};
     $.ajax({
-      url: 'https://ubcse442tada.com/delete_event',
+      url: 'https://test.ubcse442tada.com/delete_event',
       type: "post",
       data: JSON.stringify(toSend),
       dataType: "json",
@@ -195,61 +238,6 @@
     });
   }
 
-  function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    username = profile.getEmail();
-    auth_token = googleUser.getAuthResponse().id_token;
-
-    $.ajax({
-      url: 'https://ubcse442tada.com/login',
-      type: "post",
-      data: JSON.stringify({"auth_token" : auth_token, "username": username}),
-      dataType: "json",
-      contentType: "application/json",
-      success: function(userData) {
-        document.getElementById("navbar").style.display = "";
-        document.getElementById("noteCalendarDivision").style.display = "";
-        document.getElementById("startupPage").style.display = "none";
-
-        $('body').css({'overflow':'hidden'});
-        $(document).bind('scroll',function () {
-          window.scrollTo(0,0);
-        });
-
-        // document.getElementById("next1").style.display = "none";
-        // document.getElementById("next2").style.display = "none";
-        // document.getElementById("next3").style.display = "none";
-        // document.getElementById("next4").style.display = "none";
-        // document.getElementById("next5").style.display = "none";
-        // document.getElementById("next6").style.display = "none";
-        // document.getElementById("next7").style.display = "none";
-
-        var eventData = [];
-        for (i = 0; i < userData['events'].length; i++) {
-          for (j = 0; j < userData.events[i].eventList.length; j++) {
-            eventData.push({'id' : userData.events[i]._id, 'title' : userData.events[i].title, 'start' : userData.events[i].eventList[j].start, 'end' : userData.events[i].eventList[j].end});
-          }
-        }
-        createCalendar(eventData);
-        console.log(userData['notes']);
-	      for (i = 0; i < userData['notes'].length; i++) {
-          try {
-            // Load the note with start and end time
-            console.log('trying!');
-            loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, userData.notes[i].noteList[0].start, userData.notes[i].noteList[0].end);
-          }
-          catch(e){
-            console.log('catching!');
-              // If there is no start or end time ignore those fields
-              loadNote(userData.notes[i].title, userData.notes[i].noteList[0].text, userData.notes[i]._id, userData.notes[i].x, userData.notes[i].y, "", "");
-          }
-        }
-      },
-      error: function(response) {
-        console.log(response);
-      },
-    });
-  }
   // Function used for development to fake a sign-in
   function signInFake(googleUser) {
     console.log('Logged in');
@@ -260,12 +248,15 @@
     createCalendar();
   }
 
-  function signOut() {
-    var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
-  }
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.location.href = '/';
+        });
+    }
+
 
 </script>
 </head>

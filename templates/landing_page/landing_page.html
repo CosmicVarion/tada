@@ -8,19 +8,55 @@
   
   <script src="https://apis.google.com/js/platform.js" async defer></script>
   <meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
-  <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
-  
+  <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>  
+
   {% assets "landing_page_js" %}
       <script type="text/javascript" src="{{ ASSET_URL }}"></script>
   {% endassets %}
+
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
   {% assets "landing_page_css" %}
       <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
   {% endassets %}
 
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<!--<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">-->
+<script>
 
-<script src="https://cdn.jsdelivr.net/npm/chrono-node@1.3.1/chrono.min.js"></script>
+function onSignIn(googleUser) {
+
+    var profile = googleUser.getBasicProfile();
+    var username = profile.getEmail();
+
+    var auth_token = googleUser.getAuthResponse().id_token;
+    
+    //googleUser.signOut();
+
+    sessionStorage.setItem('username',username);
+    sessionStorage.setItem('auth_token',auth_token);
+    
+    sessionStorage.setItem('auth_instance',gapi.auth2.getAuthInstance());
+
+    
+    $.ajax({
+        url: 'https://test.ubcse442tada.com/login',
+        type: 'post',
+        data: JSON.stringify({'auth_token' : auth_token, 'username': username}),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function(response) {
+            console.log(response);
+            sessionStorage.setItem('userData',JSON.stringify(response));
+            document.location.href = '/app';
+        },
+        error: function(response) {
+            alert('Unexpected login error. Please try again later. If the problem persists, please report a bug using the link to GitHub below.');            
+            console.log(response);
+        },
+    });
+    
+}
+
+</script>
 
 </head>
 
@@ -71,7 +107,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto">
-            <img class="img-fluid" src="https://ubcse442tada.com/img/UI.png" alt="">
+            <img class="img-fluid" src="https://test.ubcse442tada.com/img/UI.png" alt="">
           </div>
         </div>
 
@@ -94,7 +130,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto">
-            <img class="img-fluid" src="https://ubcse442tada.com/img/login.png" alt="" width="250">
+            <img class="img-fluid" src="https://test.ubcse442tada.com/img/login.png" alt="" width="250">
           </div>
         </div>
 
@@ -120,7 +156,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto ">
-            <img class="img-fluid" src="https://ubcse442tada.com/img/note.png" alt="">
+            <img class="img-fluid" src="https://test.ubcse442tada.com/img/note.png" alt="">
           </div>
         </div>
 
@@ -146,7 +182,7 @@
             </p>
           </div>
           <div class="col-lg-5 mr-auto ">
-            <img class="img-fluid" src="https://ubcse442tada.com/img/calendar.png" alt="">
+            <img class="img-fluid" src="https://test.ubcse442tada.com/img/calendar.png" alt="">
           </div>
         </div>
 
@@ -168,7 +204,7 @@
                     </p>
                   </div>
                   <div class="col-lg-5 mr-auto ">
-                    <img class="img-fluid" src="https://ubcse442tada.com/img/week.png" alt="">
+                    <img class="img-fluid" src="https://test.ubcse442tada.com/img/week.png" alt="">
                   </div>
                 </div>
 
