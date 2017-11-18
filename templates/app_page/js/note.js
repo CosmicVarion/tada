@@ -173,7 +173,7 @@ function deleteNote(){
     $(this).parents('.note').remove(); // remove the note on click of corresponding x button
 };
 /*----------------------------------Load Note----------------------------------*/
-function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime) {    
+function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime, color) {    
     console.log('start time: ', startTime);
     console.log('end time: ', endTime);    
 
@@ -192,13 +192,14 @@ function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime) {
 
     Xaxis = Xaxis-190;
     Yaxis = Yaxis-130;
-    var noteTemp =  '<div class="note" id="' + ID + '" style="position: absolute; left:' +Xaxis+ '; top:' +Yaxis+ '">'
+    var noteTemp =  '<div class="note" id="' + ID + '" style=" background-color: ' + color + '; position: absolute; left:' +Xaxis+ '; top:' +Yaxis+ '">'
                         +'<a href="javascript:;" class="button remove">X</a>'
                         // +'<a href="javascript:;" class="button save">S</a>'
-                        +'<a href="javascript:;" class="button edit">E</a>'                                                
+                        +'<a href="javascript:;" class="button edit">E</a>'    
+                        +'<a href="javascript:;" onclick="displayColorMenu(this.parentElement)" class="button color"><center>C</center></a>'                                            
                         + 	'<div class="note_cnt">'
-                        +		'<textarea class="title" placeholder="Testing title">'+title+'</textarea>'
-                        + 		'<textarea class="cnt" placeholder="Testing description">'+content+'</textarea>' 
+                        +		'<textarea class="title" placeholder="Enter note title">'+title+'</textarea>'
+                        + 		'<textarea class="cnt" placeholder="Enter note description">'+content+'</textarea>' 
                         +	'</div> '
                         +'</div>';
 
@@ -257,6 +258,7 @@ function newNote() {
         var noteTemp =  '<div class="note" id="' + ID.toString() + '" style="position: absolute; left:' + Xaxis + '; top:' + Yaxis + '">'
                         +'<a href="javascript:;" class="button remove">X</a>'
                         +'<a href="javascript:;" class="button save">S</a>'
+                        +'<a href="javascript:;" onclick="displayColorMenu(this.parentElement)" class="button color"><center>C</center></a>' 
                         // +'<a href="javascript:;" class="button edit">E</a>'                                                
                         + 	'<div class="note_cnt">'
                         +		'<textarea class="title" placeholder="Enter note title"></textarea>'
@@ -323,6 +325,7 @@ function editNote() {
     var eX = getOffset($(this)[0]).left;
     var eY = getOffset($(this)[0]).top;
     var eID = $(this).parents('.note')[0].id
+    var eColor = rgb2hex($(this).parents('.note')[0].style.backgroundColor);
    
     console.log('Title: ', eTitle);
     console.log('Text: ', eText);
@@ -338,16 +341,16 @@ function editNote() {
     if (results.length != 0){
         if(results[0].end == null){
             newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date()};
-            toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : eColor};                        
         }   
         else{
             newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
-            toSend = {"auth_token" : auth_token, "username": username, "_id": eID,"title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "_id": eID,"title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : eColor};                        
         }      
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
     }
     else {
-        toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+        toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : eColor};                    
     }    
     
     $.ajax({
@@ -376,7 +379,8 @@ function saveNote(){
     try{
     var eTitle = $(this).parents('.note').children('.note_cnt').children('.title')[0].value; 
     var eText = $(this).parents('.note').children('.note_cnt').children('.cnt')[0].value; 
-    var ID = $(this).parents('.note')[0].id;    
+    var ID = $(this).parents('.note')[0].id;  
+    var eColor = rgb2hex($(this).parents('.note')[0].style.backgroundColor);    
     }catch(e){
         if(e){
             var eTitle = '';
@@ -401,16 +405,16 @@ function saveNote(){
 
     if (results.length != 0){
         if(results[0].end == null){
-            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : eColor};                        
         }   
         else{
-            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : "#ffffff"};                        
+            toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : eColor};                        
         }
         console.log(results[0].start.date().toString())
                     
     }
     else {
-        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : "#ffffff"};                    
+        toSend = {"auth_token" : auth_token, "username": username, "title": eTitle, "noteList" : [{"text" : eText}], "x": eX, "y": eY, "color" : eColor};                    
     }
     
     $.ajax({
@@ -453,3 +457,41 @@ function saveNote(){
     $('.edit').click(editNote); // enable edit functionality onclick of edit button
     $(this).remove(); // remove the save button 
 };
+
+/*----------------------------------Color Note----------------------------------*/
+function displayColorMenu(elemt){
+    //append to this array to add more color options
+    var colorList = ['#2c2a50', '#6a7da0', '#c0c7c2', '#ede6d3', '#fefdf3', 
+                     '#234a56', '#417d95', '#89b9c5', '#c1dee2', '#dde7dc',    
+                     '#c5af7d', '#e9dfcb', '#f6f4ee', '#e2e9f0', '#b5ccdc',
+                     '#c76675', '#edb7bc', '#f2dadb', '#f2f2ea', '#aecdc4'];
+
+    var span = document.createElement('span');
+    for (var i = elemt.children.length - 1; i >= 0; i--) {
+        elemt.children[i].style.display = "none";
+    }
+    // elemt.style.backgroundColor = "#000000";
+    elemt.style.backgroundColor = 'transparent';
+    var inner = "";
+    for (var i = colorList.length - 1; i >= 0; i--) {
+        inner += "<div class='colorNode' onclick='chooseColor(this.parentElement.parentElement,this)' style='background-color:" + colorList[i] +"'></div>";
+    }
+    span.innerHTML = inner
+    elemt.appendChild(span);
+}
+
+function chooseColor(elemt, colorNode){
+    elemt.style.backgroundColor = colorNode.style.backgroundColor;
+    elemt.removeChild(colorNode.parentElement);
+    for (var i = elemt.children.length - 1; i >= 0; i--) {
+        elemt.children[i].style.display = "inherit";
+    }
+}
+
+function rgb2hex(rgb){
+ rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+ return (rgb && rgb.length === 4) ? "#" +
+  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+}

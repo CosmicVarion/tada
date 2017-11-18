@@ -711,7 +711,7 @@ TODO: more distinction between this file and common.css
 }
 
 .fc-unthemed td.fc-today {
-	background: #fcf8e3;
+	background: #eff2f0;
 }
 
 .fc-unthemed .fc-disabled-day {
@@ -13537,7 +13537,7 @@ ul {
   height: 160px;  
   margin: 0 20px 20px 0;
   background: linear-gradient(top, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25));
-  background-color: #C5CEAE;
+  background-color: #c0c7c2;
   box-shadow: 5px 5px 10px -2px rgba(33, 33, 33, 0.3);
   /* transform: rotate(2deg); */
   /* transform: skew(-1deg, 1deg); */
@@ -13575,9 +13575,9 @@ ul {
       height: 90px; 
     }
   .note:nth-child(2n) {
-    background: #F0E2A4; }
+    background: #c0c7c2; }
   .note:nth-child(3n) {
-    background: #F4EBC3    ; }
+    background: #c0c7c2    ; }
 
 /* Button style  */
 .buttonnote {
@@ -13705,6 +13705,30 @@ ul {
     background-color:gray;
     text-decoration: none;
   }
+  .button.color {
+    position: absolute;
+    top: 65px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: #FFFFFF;
+    padding: 1em 2em;
+    background: linear-gradient(top, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+    background-color: black;
+    text-align: center;
+    line-height: 8px;
+    padding: 9px;
+    font-style: 1.6em;
+    font-weight: bolder;
+    font-size: 12px;
+    font-family: Helvetica, Arial, sans-serif; 
+    text-decoration: none;
+  }
+  .button.color:hover {
+    background-color:gray;
+    text-decoration: none;
+  }
 
 #add_new {
   border-top-right-radius: 4px;
@@ -13713,6 +13737,17 @@ ul {
   border-bottom-left-radius: 4px;
   margin-left: .75em;
   z-index: 100; }
+
+.colorNode{
+  border: 2px solid black;
+  cursor:pointer;
+  display:inline-block;
+  position:relative;
+  margin-left: 5px;
+  margin-top:5px;
+  min-width:24px;
+  min-height:24px;
+}
 
 #save_note {
   border-top-right-radius: 4px;
