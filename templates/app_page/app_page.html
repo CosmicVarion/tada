@@ -174,7 +174,7 @@
       },
       events: eventData,
       eventClick: function(calEvent) {
-        console.log(calEvent.id);
+        //console.log(calEvent.id);
         if (!calEvent.id.includes("note")) {
           document.getElementById("eventTitle").value = calEvent.title;
           document.getElementById("startTimeCalendar").value = moment(calEvent.start).format("M/D/YYYY h:mm A");
@@ -220,9 +220,9 @@
     if (validateForm()) {
       $('#addEventModal').modal('toggle');
       var toSend = {"auth_token" : auth_token, "username": username, "title": titleOfNewEvent, "eventList" : [{"start" : startDateOfNewEvent, "end" : endDateOfNewEvent, "color" : colorOfNewEvent}]};
-      console.log(toSend);
+      //console.log(toSend);
       $.ajax({
-        url: 'https://test.ubcse442tada.com/add_event',
+        url: 'https://ubcse442tada.com/add_event',
         type: "post",
         data: JSON.stringify(toSend),
         dataType: "json",
@@ -266,7 +266,7 @@
       $('#calendar_full').fullCalendar('updateEvent', event);
     
       $.ajax({
-        url: 'https://test.ubcse442tada.com/edit_event',
+        url: 'https://ubcse442tada.com/edit_event',
         type: "post",
         data: JSON.stringify(toSend),
         dataType: "json",
@@ -290,10 +290,10 @@
   function deleteEvent(eventID) {
 
 
-    console.log(eventID);
+    //console.log(eventID);
     var toSend = {"auth_token" : auth_token, "_id" : eventID};
     $.ajax({
-      url: 'https://test.ubcse442tada.com/delete_event',
+      url: 'https://ubcse442tada.com/delete_event',
       type: "post",
       data: JSON.stringify(toSend),
       dataType: "json",
