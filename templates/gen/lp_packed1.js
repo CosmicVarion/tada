@@ -26,7 +26,7 @@ body, h1, h2, h3, h4, h5, h6 {
   padding-bottom: 50px;
   text-align: center;
   color: #f8f8f8;
-  background: url(https://test.ubcse442tada.com/img/intro-bg.jpg) no-repeat center center;
+  background: url(../img/intro-bg.jpg) no-repeat center center;
   background-size: cover;
 }
 
@@ -107,7 +107,7 @@ body, h1, h2, h3, h4, h5, h6 {
 .banner {
   padding: 100px 0;
   color: #f8f8f8;
-  background: url(https://test.ubcse442tada.com/img/banner-bg.jpg) no-repeat center center;
+  background: url(../img/banner-bg.jpg) no-repeat center center;
   background-size: cover;
 }
 

@@ -77,15 +77,15 @@
         var userData = JSON.parse(sessionStorage.getItem('userData'));
 
         var eventData = [];
-        for (i = 0; i < userData['events'].length; i++) {
-            for (j = 0; j < userData.events[i].eventList.length; j++) {
-            eventData.push({'id' : userData.events[i]._id, 'title' : userData.events[i].title, 'start' : moment(userData.events[i].eventList[j].start, "M/D/YYYY H:mm A"), 'end' : moment(userData.events[i].eventList[j].end, "M/D/YYYY H:mm A"), 'color' : userData.events[i].eventList[j].color});
-            console.log("color:");
-            console.log(userData.events[i].eventList[j].color);
 
+        for (i = 0; i < userData['events'].length; i++) {
+            for (j = 0; j < userData.events[i].eventList.length; j++) {     
+            
+                eventData.push({'id' : userData.events[i]._id, 'title' : userData.events[i].title, 'start' : moment(userData.events[i].eventList[j].start, "M/D/YYYY H:mm A"), 'end' : moment(userData.events[i].eventList[j].end, "M/D/YYYY H:mm A"), color : userData.events[i].eventList[j].color});
 
             }
         }
+
         createCalendar(eventData);
 
         for (i = 0; i < userData['notes'].length; i++) {
@@ -246,8 +246,7 @@
 
   function editEvent(event) {
     event.title = document.getElementById("eventTitle").value;
-    event.start = moment(document.getElementById("startTimeCalendar").value, "M/D/YYYY H:mm A");
-    event.end = moment(document.getElementById("endTimeCalendar").value, "M/D/YYYY H:mm A");
+    
     var children = document.getElementById("eventColor").getElementsByTagName('span')[0].children;
     var colorFlag = false;
     for (var i = 0; i < children.length; i++) {
@@ -259,8 +258,9 @@
     if (!colorFlag) {
       event.color = '#3a87ad';
     }
-    toSend = {"auth_token" : auth_token, "username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : event.start, "end" : event.end}], "color" : event.color};
-    
+    toSend = {"auth_token" : auth_token, "username": username, "title": event.title, "_id" : event.id, "eventList" : [{"start" : document.getElementById("startTimeCalendar").value, "end" : document.getElementById("endTimeCalendar").value, "color" : event.color}]};
+    event.start = moment(document.getElementById("startTimeCalendar").value, "M/D/YYYY H:mm A");
+    event.end = moment(document.getElementById("endTimeCalendar").value, "M/D/YYYY H:mm A");
     if (validateForm()) {
       $('#addEventModal').modal('toggle');
       $('#calendar_full').fullCalendar('updateEvent', event);
@@ -345,7 +345,8 @@
 
     <div class="collapse navbar-collapse">
         <form class="form-inline my-2 my-lg-0">
-          <button class="btn btn-danger my-2 my-sm-0" onclick="signOut()">Sign Out</button>
+          <!-- style="background-color: #c0c7c2; border-color: #c0c7c2;" -->
+          <button class="btn btn-primary my-2 my-sm-0" onclick="signOut()">Sign Out</button>
         </form>
     </div>
   </nav>
@@ -407,7 +408,7 @@
           <div class="modal-footer" >
             <!-- addEvent() is the function called when the Save button is pressed -->
             <!-- Modal will close after either button is pressed -->
-            <button type="submit" class="btn btn-success" onclick="addEvent()" id="saveModalButton">Save</button>
+            <button type="submit" class="btn btn-primary" onclick="addEvent()" id="saveModalButton">Save</button>
             <button type="button" class="btn btn-secondary disabled" data-dismiss="modal" onclick="deleteEvent()" id="deleteModalButton">Delete</button>
           </div>
         </div>

@@ -1,71 +1,57 @@
-<!-- <!DOCTYPE html> -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
   <head>
-  <title>TaDa</title>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
-  <meta name="google-signin-client_id" content="275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com">
-  <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>  
 
-  {% assets "landing_page_js" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-  {% endassets %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-  {% assets "landing_page_css" %}
-      <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
-  {% endassets %}
-
-<script>
-
-function onSignIn(googleUser) {
-
-    var profile = googleUser.getBasicProfile();
-    var username = profile.getEmail();
-
-    var auth_token = googleUser.getAuthResponse().id_token;
+    <title>TaDa</title>
     
-    //googleUser.signOut();
-
-    sessionStorage.setItem('username',username);
-    sessionStorage.setItem('auth_token',auth_token);
+    <!-- Google sign in -->
+    <!-- <script src="https://apis.google.com/js/platform.js" async defer></script> -->
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/api:client.js"></script>
     
-    sessionStorage.setItem('auth_instance',gapi.auth2.getAuthInstance());
+    {% assets "landing_page_css" %}
+        <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
+    {% endassets %}
 
+    <!-- Custom fonts for this template -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
     
-    $.ajax({
-        url: 'https://test.ubcse442tada.com/login',
-        type: 'post',
-        data: JSON.stringify({'auth_token' : auth_token, 'username': username}),
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function(response) {
-            console.log(response);
-            sessionStorage.setItem('userData',JSON.stringify(response));
-            document.location.href = '/app';
-        },
-        error: function(response) {
-            alert('Unexpected login error. Please try again later. If the problem persists, please report a bug using the link to GitHub below.');            
-            console.log(response);
-        },
-    });
-    
-}
+  </head>
 
-</script>
+  <body>
 
-</head>
+    <!-- Navigation -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">TaDa</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav> -->
 
-<body>
-
-  <div id = "startupPage" class="text-center">
-
-        <!-- Header -->
-    <header class="intro-header" id="next1">
+    <!-- Header -->
+    <header class="intro-header">
       <div class="container">
         <div class="intro-message">
           <h1>TaDa</h1>
@@ -73,27 +59,30 @@ function onSignIn(googleUser) {
           <hr class="intro-divider">
           <ul class="list-inline intro-social-buttons">
             <li class="list-inline-item">
-              <!--<a href="#" class="btn btn-secondary btn-lg">-->
-                <!--<i class="fa fa-google fa-fw"></i>-->
-                <!--<button class="btn btn-secondary my-2 my-sm-0" onclick="signInFake()">Sign In</button></h1>-->
-                <div class="g-signin2" data-onsuccess="onSignIn" style="height: 50px; width: 180px;"></div>
-                <!-- <span class="network-name">Sign-In</span> -->
-                <!--<span class="network-name">Sign-In</span>-->
-              <!--</a>-->
+              <div class="btn btn-secondary btn-lg" id="googleSignInButton">
+                <i class="fa fa-google fa-fw"></i>
+                <span class="network-name">Sign-In</span>
+              </div>
             </li>
-            <!--<li class="list-inline-item">
+            <li class="list-inline-item">
               <a href="https://github.com/CosmicVarion/tada" class="btn btn-secondary btn-lg">
                 <i class="fa fa-github fa-fw"></i>
                 <span class="network-name">Github</span>
               </a>
-            </li>-->
+            </li>
+            <!-- <li class="list-inline-item">
+              <a href="#" class="btn btn-secondary btn-lg">
+                <i class="fa fa-linkedin fa-fw"></i>
+                <span class="network-name">Linkedin</span>
+              </a>
+            </li> -->
           </ul>
         </div>
       </div>
     </header>
 
     <!-- Page Content -->
-    <section class="content-section-a" id="next2">
+    <section class="content-section-a">
 
       <div class="container">
         <div class="row">
@@ -102,12 +91,12 @@ function onSignIn(googleUser) {
             <div class="clearfix"></div>
             <h2 class="section-heading">The TaDa Web App</h2>
             <p class="lead">
-              A productivity web app for keeping track of your schedule and what you need to do!
+              A productivity web app for keeping track of your schedule and what you need to do! 
               "It's not to-do, it's TaDa. Magical to get anything done."
             </p>
           </div>
           <div class="col-lg-5 mr-auto">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/UI.png" alt="">
+            <img class="img-fluid" src="img/UI.png" alt="">
           </div>
         </div>
 
@@ -115,22 +104,23 @@ function onSignIn(googleUser) {
       <!-- /.container -->
     </section>
 
-    <section class="content-section-a" id="next3">
+    <section class="content-section-b">
 
       <div class="container">
+
         <div class="row">
-          <div class="col-lg-5 ml-auto">
+          <div class="col-lg-5 mr-auto order-lg-2">
             <hr class="section-heading-spacer">
             <div class="clearfix"></div>
             <h2 class="section-heading">Sign-In</h2>
             <p class="lead">
-              To sign-in, click the Sign-In button and authenticate with Google.
-              Upon login, you will be able to create notes and calendar events.
+              To sign-in, click the Sign-In button and authenticate with Google. 
+              Upon login, you will be able to create notes and calendar events. 
               When you re-enter the application after log-out, your saved notes and events will automatically populate.
             </p>
           </div>
-          <div class="col-lg-5 mr-auto">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/login.png" alt="" width="250">
+          <div class="col-lg-5 ml-auto order-lg-1">
+            <img class="img-fluid" src="img/login.png" alt="" width="350">
           </div>
         </div>
 
@@ -140,7 +130,7 @@ function onSignIn(googleUser) {
     </section>
     <!-- /.content-section-b -->
 
-    <section class="content-section-a" id="next4">
+    <section class="content-section-a">
 
       <div class="container">
 
@@ -150,13 +140,14 @@ function onSignIn(googleUser) {
             <div class="clearfix"></div>
             <h2 class="section-heading">Note</h2>
             <p class="lead">
-                When you create a note, you can add a title and text and move it around.
-                Delete a note by clicking the 'x' button.
-                To save, click the 's' button. After saving, click the 'e' button to make an edit. 
+              When you create a note by pressing the 'Add Note' button, you can add a title and text and move it around. 
+              Delete a note by clicking the 'X' button. To save, click the 'S' button. 
+              After saving, click the 'E' button to save any future edits you make to your notes.
+              Click the 'C' button to select a background color for your notes.
             </p>
           </div>
           <div class="col-lg-5 mr-auto ">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/note.png" alt="">
+            <img class="img-fluid" src="img/note.png" alt="">
           </div>
         </div>
 
@@ -166,86 +157,100 @@ function onSignIn(googleUser) {
     </section>
     <!-- /.content-section-a -->
 
-    <section class="content-section-a" id="next5">
+    <section class="content-section-b">
 
       <div class="container">
 
         <div class="row">
-            <div class="col-lg-5 ml-auto">
+          <div class="col-lg-5 mr-auto order-lg-2">
             <hr class="section-heading-spacer">
             <div class="clearfix"></div>
             <h2 class="section-heading">Calendar</h2>
             <p class="lead">
-              Add an event with title, start and end time.
-              A modal will help you choose the date and time.
-              After saving, the event will appear in the calendar, and you can click it to edit or delete.
+              Clicking the 'Add New Event' button will open up a modal that will help you choose a title, 
+              start and end time, and a color (optional) for your new event.
+              After saving, the event will appear in the calendar which you can then click to make any future edits or to delete.
             </p>
           </div>
-          <div class="col-lg-5 mr-auto ">
-            <img class="img-fluid" src="https://test.ubcse442tada.com/img/calendar.png" alt="">
+          <div class="col-lg-5 ml-auto order-lg-1">
+            <img class="img-fluid" src="img/calendar.png" alt="">
           </div>
         </div>
 
       </div>
       <!-- /.container -->
+    </section>    
+
+    <section class="content-section-a">
+        
+      <div class="container">
+
+        <div class="row">
+          <div class="col-lg-5 ml-auto">
+            <hr class="section-heading-spacer">
+            <div class="clearfix"></div>
+            <h2 class="section-heading">Weekly View</h2>
+            <p class="lead">
+              Weekly view is provided along with monthly view. Buttons to switch between view are in the top right corner.
+            </p>
+          </div>
+          <div class="col-lg-5 mr-auto ">
+            <img class="img-fluid" src="img/week.png" alt="">
+          </div>
+        </div>
+
+      </div>
+      <!-- /.container -->
+
     </section>
+    <section class="content-section-b">
+        
+      <div class="container">
 
-    <section class="content-section-a" id="next6">
+        <div class="row">
+          <div class="col-lg-5 mr-auto order-lg-2">
+            <hr class="section-heading-spacer">
+            <div class="clearfix"></div>
+            <h2 class="section-heading">Note-Calendar Integration</h2>
+            <p class="lead">
+              Saving a date in the description of your notes will make an event appear on your Calendar.
+              This event will have the same title as the corresponding note and the same color as your note as well.
+              Clicking on these events will not open the modal; any edits you want to make to this event must happen in the note itself.
+              Examples of text which translates to a date are but are not limited to: "Tomorrow at 3 PM to 4 PM", "This Friday at 10 AM", "11/20/2017 at noon", etc.
+            </p>
+          </div>
+          <div class="col-lg-5 ml-auto order-lg-1">
+            <img class="img-fluid" src="img/integration.png" alt="">
+          </div>
+        </div>
 
-              <div class="container">
+      </div>
+      <!-- /.container -->
+    </section>  
 
-                <div class="row">
-                  <div class="col-lg-5 ml-auto">
-                    <hr class="section-heading-spacer">
-                    <div class="clearfix"></div>
-                    <h2 class="section-heading">Weekly View</h2>
-                    <p class="lead">
-                      Weekly view is provided along with monthly view. Buttons to switch between view are in the top right corner.
-                    </p>
-                  </div>
-                  <div class="col-lg-5 mr-auto ">
-                    <img class="img-fluid" src="https://test.ubcse442tada.com/img/week.png" alt="">
-                  </div>
-                </div>
-
-              </div>
-              <!-- /.container -->
-
-            </section>
-
-    <aside class="banner" id="next7">
+    <aside class="banner">
 
       <div class="container">
 
         <div class="row">
-          <div class="col-lg-6 my-auto">
-            <h2>Bug Reporting and Feedback</h2>
-            <!--<p class="lead">
-                1) To report bug, you should click the link on the right, which will take you to the GitHub issues page for TaDa web application. </br>
-                2) Click the New Issue button and insert the title according to the format. Bug Report:  (content). </br>
-                3) In the description, write the details about the bug that you found. </br>
-                4) On the right, label the issue by clicking the label and bug. </br>
-                5) To finish the submission, click the Submit New Issue button. </br>
-              </p> -->
-            <br>
-            <ul>
-                <li>To report a bug, click the link on the right for the GitHub issues page.</li><br>
-                <li>Click the New Issue button and insert the title according to the format. Bug Report:  (content).</li><br>
-                <li>In the description, tell us about the bug that you found.</li><br>
-                <li>On the right, label the issue by clicking the label and bug.</li><br>
-                <li>To finish the report, click the Submit New Issue button.</li><br>
-                <li>Thanks for helping us improve TaDa!</li><br><br><br>
-                <li>Our feedback form is linked on the right.</li><br>
-              </ul>
-
-
+          <div class="col-lg-7 my-auto">
+            <h2>Bug Report</h2>
+            <p class="lead"></br>
+                To report a bug, click the link on the right for the GitHub issues page. </br>
+                1) Click the "New Issue" button and insert the title according to the format: "Bug Report: (content)".</br>               
+                2) In the description, tell us about the bug that you found.</br>
+                3) On the right, label the issue by clicking the label and bug.</br>
+                4) To finish the report, click the "Submit New Issue" button.</br></br>
+                Thanks for helping us improve TaDa!</br></br>     
+                Our feedback form is linked on the right.</br>      
+              </p>   
           </div>
-
-          <div class="col-lg-6 my-auto">
+          
+          <div class="col-lg-5 my-auto">
 
             <ul class="list-inline banner-social-buttons">
 
-
+                 
               <li class="list-inline-item">
                 <a href="https://github.com/CosmicVarion/tada/issues" class="btn btn-secondary btn-lg">
                   <i class="fa fa-github fa-fw"></i>
@@ -258,6 +263,12 @@ function onSignIn(googleUser) {
                   <span class="network-name">Feedback Form</span>
                 </a>
               </li>
+              <!-- <li class="list-inline-item">
+                <a href="#" class="btn btn-secondary btn-lg">
+                  <i class="fa fa-linkedin fa-fw"></i>
+                  <span class="network-name">Linkedin</span>
+                </a>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -269,16 +280,79 @@ function onSignIn(googleUser) {
     <!-- /.banner -->
 
     <!-- Footer -->
-    <!-- <footer>
+    <footer>
       <div class="container">
+        <!-- <ul class="list-inline">
+          <li class="list-inline-item">
+            <a href="#">Home</a>
+          </li>
+          <li class="footer-menu-divider list-inline-item">&sdot;</li>
+          <li class="list-inline-item">
+            <a href="#about">About</a>
+          </li>
+          <li class="footer-menu-divider list-inline-item">&sdot;</li>
+          <li class="list-inline-item">
+            <a href="#services">Services</a>
+          </li>
+          <li class="footer-menu-divider list-inline-item">&sdot;</li>
+          <li class="list-inline-item">
+            <a href="#contact">Contact</a>
+          </li>
+        </ul> -->
         <p class="copyright text-muted small">Copyright &copy; TaDa 2017. All Rights Reserved</p>
       </div>
-    </footer> -->
+    </footer>
 
-  </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    {% assets "landing_page_js" %}
+        <link href="{{ ASSET_URL }}" rel='stylesheet' type='text/css'></link>
+    {% endassets %}
+    <script>
 
-      </div>
-    </div>
-  </div>
-</body>
+        var googleUser = {};
+        $(document).ready(function () {
+            gapi.load('auth2', function(){
+                auth2 = gapi.auth2.init({
+                    client_id: '275995304578-5k2tiodmufnlb9tkqjitaf5tq0its755.apps.googleusercontent.com',
+                    cookiepolicy: 'single_host_origin',
+                });
+
+                auth2.attachClickHandler(document.getElementById('googleSignInButton'), {}, function(googleUser) {
+                    var profile = googleUser.getBasicProfile();
+                    var username = profile.getEmail();
+
+                    var auth_token = googleUser.getAuthResponse().id_token;
+
+                    sessionStorage.setItem('username',username);
+                    sessionStorage.setItem('auth_token',auth_token);
+
+                    sessionStorage.setItem('auth_instance',gapi.auth2.getAuthInstance());
+
+                    $.ajax({
+                        url: 'https://test.ubcse442tada.com/login',
+                        type: 'post',
+                        data: JSON.stringify({'auth_token' : auth_token, 'username': username}),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function(response) {
+                            sessionStorage.setItem('userData',JSON.stringify(response));
+                            document.location.href = '/app';
+                        },
+                        error: function(response) {
+                            alert('Unexpected login error. Please try again later. If the problem persists, please report a bug using the link to GitHub below.');            
+                            console.log(response);
+                        },
+                    });
+
+                }, function(error) {
+                    alert(JSON.stringify(error, undefined, 2));
+                });
+            });
+        });
+
+    </script>
+
+
+  </body>
+
 </html>

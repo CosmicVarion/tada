@@ -255,7 +255,7 @@ function newNote() {
         Xaxis = Xaxis-190;
         Yaxis = Yaxis-130;
 
-        var noteTemp =  '<div class="note" id="' + ID.toString() + '" style="position: absolute; left:' + Xaxis + '; top:' + Yaxis + '">'
+        var noteTemp =  '<div class="note" id="' + ID.toString() + '" style="position: absolute; left:' + Xaxis + '; top:' + Yaxis + '; background-color: #c0c7c2">'
                         +'<a href="javascript:;" class="button remove">X</a>'
                         +'<a href="javascript:;" class="button save">S</a>'
                         +'<a href="javascript:;" onclick="displayColorMenu(this.parentElement)" class="button color"><center>C</center></a>' 
@@ -381,6 +381,10 @@ function saveNote(){
     var eText = $(this).parents('.note').children('.note_cnt').children('.cnt')[0].value; 
     var ID = $(this).parents('.note')[0].id;  
     var eColor = rgb2hex($(this).parents('.note')[0].style.backgroundColor);    
+    console.log("hi");    
+    console.log(eColor);
+    //console.log($(this).parents('.note')[0]);
+    //console.log($(this).parents('.note')[0].style);     
     }catch(e){
         if(e){
             var eTitle = '';

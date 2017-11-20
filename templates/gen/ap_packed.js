@@ -18035,10 +18035,10 @@ function loadNote(title, content, ID, Xaxis, Yaxis, startTime, endTime, color) {
         var newElement;
         if (endTime !== "") {
             var resultEnd = chrono.parse(endTime);
-            newElement = {id: "note" + ID, title : title, start : resultStart[0].start.date(), end : resultEnd[0].start.date()};
+            newElement = {id: "note" + ID, title : title, start : resultStart[0].start.date(), end : resultEnd[0].start.date(), color : color};
         }
         else {
-            newElement = {id: "note" + ID, title : title, start : resultStart[0].start.date()};
+            newElement = {id: "note" + ID, title : title, start : resultStart[0].start.date(), color};
         }
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);
     }  
@@ -18108,7 +18108,7 @@ function newNote() {
         Xaxis = Xaxis-190;
         Yaxis = Yaxis-130;
 
-        var noteTemp =  '<div class="note" id="' + ID.toString() + '" style="position: absolute; left:' + Xaxis + '; top:' + Yaxis + '">'
+        var noteTemp =  '<div class="note" id="' + ID.toString() + '" style="position: absolute; left:' + Xaxis + '; top:' + Yaxis + '; background-color: #c0c7c2">'
                         +'<a href="javascript:;" class="button remove">X</a>'
                         +'<a href="javascript:;" class="button save">S</a>'
                         +'<a href="javascript:;" onclick="displayColorMenu(this.parentElement)" class="button color"><center>C</center></a>' 
@@ -18193,11 +18193,11 @@ function editNote() {
  
     if (results.length != 0){
         if(results[0].end == null){
-            newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date()};
+            newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), color : eColor};
             toSend = {"auth_token" : auth_token, "username": username, "_id": eID, "title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : ""}], "x": eX, "y": eY, "color" : eColor};                        
         }   
         else{
-            newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+            newElement = {id: "note" + eID, title : eTitle, start : results[0].start.date(), end : results[0].end.date(), color : eColor};
             toSend = {"auth_token" : auth_token, "username": username, "_id": eID,"title": eTitle, "noteList" : [{"text" : eText, "start" : results[0].start.date().toString(), "end" : results[0].end.date().toString()}], "x": eX, "y": eY, "color" : eColor};                        
         }      
         $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
@@ -18234,6 +18234,10 @@ function saveNote(){
     var eText = $(this).parents('.note').children('.note_cnt').children('.cnt')[0].value; 
     var ID = $(this).parents('.note')[0].id;  
     var eColor = rgb2hex($(this).parents('.note')[0].style.backgroundColor);    
+    console.log("hi");    
+    console.log(eColor);
+    //console.log($(this).parents('.note')[0]);
+    //console.log($(this).parents('.note')[0].style);     
     }catch(e){
         if(e){
             var eTitle = '';
@@ -18288,10 +18292,10 @@ function saveNote(){
              
                 if (results.length != 0){
                     if(results[0].end == null){
-                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date()};                     
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), color : eColor};                     
                     }   
                     else{
-                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date()};
+                        newElement = {id: "note" + newID, title : eTitle, start : results[0].start.date(), end : results[0].end.date(), color : eColor};
                     }      
                     $('#calendar_full').fullCalendar('renderEvent', newElement , true);       
                 }

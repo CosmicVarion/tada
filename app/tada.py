@@ -19,22 +19,16 @@ application = app
 assets = Environment(app)
 
 # landing page javascript and css
-lp_js = Bundle('common/js/jquery.min.js',
-               'common/js/bootstrap.js',
-               'common/js/jquery.backtotop.js',
-               'common/js/jquery.mobilemenu.js',
-               'common/js/jquery.placeholder.min.js',
-               'common/js/popper.min.js',
-               output='gen/lp_packed.js')
-assets.register('landing_page_js',lp_js)
-
-#'common/css/layout.css',
-
-lp_css = Bundle('common/css/bootstrap.css',
-                'common/css/jquery-ui.css',
+lp_css = Bundle('landing_page/css/bootstrap.min.css',
                 'landing_page/css/landing-page.css',
                 output='gen/lp_packed.css')
 assets.register('landing_page_css',lp_css)
+
+#lp_js = Bundle('landing_page/js/jquery.min.js',
+lp_js = Bundle('landing_page/js/popper.min.js',
+               'landing_page/js/bootstrap.min.js',
+               output='gen/lp_packed.js')
+assets.register('landing_page_js',lp_js)
 
 # app page javascript and css
 ap_js = Bundle('app_page/js/moment.min.js',
@@ -112,10 +106,10 @@ def add_note():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
-    
+    del json_dict['auth_token']
     _id = str(ObjectId())
     json_dict['_id'] = _id
-
+    
     try:    
         mongo.db.notes.insert_one(json_dict)
     except Exception as e:
@@ -139,7 +133,7 @@ def add_event():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
-    
+    del json_dict['auth_token']
     _id = str(ObjectId())
     json_dict['_id'] = _id
     
@@ -168,7 +162,7 @@ def delete_note():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
-
+    del json_dict['auth_token']
     try:    
         _id = json_dict['_id']
         print((mongo.db.notes.delete_one({'_id': _id})).deleted_count)
@@ -193,7 +187,7 @@ def delete_event():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
-
+    del json_dict['auth_token']
     try:    
         _id = json_dict['_id']
         print((mongo.db.events.delete_one({'_id': _id})).deleted_count)
@@ -218,7 +212,7 @@ def edit_note():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
-
+    del json_dict['auth_token']
     try:
         _id = json_dict['_id']
         del json_dict['_id']
@@ -244,7 +238,7 @@ def edit_event():
     if not usercheck:
         content = 'Validation failed'
         return content, 401
-
+    del json_dict['auth_token']
     try:    
         _id = json_dict['_id']
         del json_dict['_id']
